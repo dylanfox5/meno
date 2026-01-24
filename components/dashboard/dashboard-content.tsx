@@ -7,6 +7,7 @@ import { ArrowRight, BookOpen, Calendar, Flame, PenLine } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useJournal } from "@/lib/journal-context";
+import { EmptyState } from "@/components/dashboard/empty-state";
 
 const verses = [
   { text: "Be still, and know that I am God.", reference: "Psalm 46:10" },
@@ -109,6 +110,42 @@ export function DashboardContent() {
         <div className="flex items-center justify-center py-12">
           <p className="text-muted-foreground">Loading your entries...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no entries
+  if (entries.length === 0) {
+    return (
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+        {/* Welcome Section */}
+        <div className="rounded-xl p-6 mb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">
+                {format(today, "EEEE, MMMM d, yyyy")}
+              </p>
+              <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
+                Good {getTimeOfDay()}, friend
+              </h1>
+              <p className="text-muted-foreground max-w-xl">
+                Welcome to Meno. Take a moment to pause, reflect, and connect with God through journaling.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-5 border-t border-border">
+            <p className="font-serif text-lg text-foreground italic leading-relaxed">
+              {`"${verse.text}"`}
+            </p>
+            <p className="text-sm text-primary font-medium mt-2">
+              — {verse.reference}
+            </p>
+          </div>
+        </div>
+
+        {/* Empty State */}
+        <EmptyState onCreateNew={() => openEditor()} />
       </div>
     );
   }

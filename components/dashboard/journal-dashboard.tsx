@@ -9,7 +9,7 @@ import { EmptyState } from "./empty-state";
 import { useJournal } from "@/lib/journal-context";
 
 export function JournalDashboard() {
-  const { entries, openEditor, deleteEntry } = useJournal();
+  const { entries, isLoading, openEditor, deleteEntry } = useJournal();
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredEntries = useMemo(() => {
@@ -18,11 +18,21 @@ export function JournalDashboard() {
     return entries.filter(
       (entry) =>
         entry.title.toLowerCase().includes(query) ||
-        entry.content.toLowerCase().includes(query) ||
+        entry.content?.toLowerCase().includes(query) ||
         entry.scripture?.toLowerCase().includes(query) ||
-        entry.tags.some((tag) => tag.toLowerCase().includes(query))
+        entry.tags?.some((tag) => tag.toLowerCase().includes(query))
     );
   }, [entries, searchQuery]);
+
+  if (isLoading) {
+    return (
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-muted-foreground">Loading your journal...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
@@ -33,7 +43,10 @@ export function JournalDashboard() {
             Your Journal
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Reflect, write, and grow in your faith journey
+            {entries.length === 0 
+              ? "Start your faith journey" 
+              : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`
+            }
           </p>
         </div>
         <Button onClick={() => openEditor()} className="gap-1.5">
@@ -42,23 +55,30 @@ export function JournalDashboard() {
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          placeholder="Search entries by title, content, scripture, or tags..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
-        />
-      </div>
+      {/* Only show search if there are entries */}
+      {entries.length > 0 && (
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search entries by title, content, or scripture..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      )}
 
       {/* Entries List */}
-      {filteredEntries.length === 0 && !searchQuery ? (
+      {entries.length === 0 ? (
         <EmptyState onCreateNew={() => openEditor()} />
       ) : filteredEntries.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground bg-card border border-border rounded-xl">
-          No entries found matching your search.
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground mb-4">
+            No entries found matching "{searchQuery}"
+          </p>
+          <Button variant="outline" onClick={() => setSearchQuery("")}>
+            Clear search
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
