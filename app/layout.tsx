@@ -11,7 +11,7 @@ const _lora = Lora({ subsets: ["latin"], variable: '--font-lora' });
 const _inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Selah - Spiritual Disciplines',
+  title: 'Meno',
   description: 'A reflective space for journaling, prayer, and growing in faith',
   generator: 'v0.app',
   icons: {
