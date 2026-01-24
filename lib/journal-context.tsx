@@ -16,6 +16,7 @@ import {
   updateJournalEntry, 
   deleteJournalEntry 
 } from "@/app/journal/actions";
+import { toast } from "sonner";
 
 interface JournalContextType {
   entries: JournalEntry[];
@@ -51,6 +52,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
       setEntries(data);
     } catch (error) {
       console.error("Error loading journal entries:", error);
+      toast.error("Failed to load journal entries");
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +78,9 @@ export function JournalProvider({ children }: { children: ReactNode }) {
         // Update existing entry
         const result = await updateJournalEntry(id, draft);
         if (result.error) {
-          console.error("Error updating entry:", result.error);
+          toast.error("Failed to update entry", {
+            description: result.error
+          });
           return;
         }
         // Update local state optimistically
@@ -84,6 +88,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
           setEntries((prev) =>
             prev.map((e) => (e.id === id ? result.data! : e))
           );
+          toast.success("Entry updated successfully");
         }
       } else {
         // Create new entry
@@ -92,19 +97,24 @@ export function JournalProvider({ children }: { children: ReactNode }) {
           content: draft.content || null,
           scripture: draft.scripture || null,
           type: draft.type || 'Life',
+          tags: []
         });
         if (result.error) {
-          console.error("Error creating entry:", result.error);
+          toast.error("Failed to create entry", {
+            description: result.error
+          });
           return;
         }
         // Add new entry to local state
         if (result.data) {
           setEntries((prev) => [result.data!, ...prev]);
+          toast.success("Entry created successfully");
         }
       }
       closeEditor();
     } catch (error) {
       console.error("Error saving entry:", error);
+      toast.error("An unexpected error occurred");
     }
   }, [closeEditor]);
 
@@ -112,16 +122,20 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     try {
       const result = await deleteJournalEntry(id);
       if (result.error) {
-        console.error("Error deleting entry:", result.error);
+        toast.error("Failed to delete entry", {
+          description: result.error
+        });
         return;
       }
       // Remove from local state
       setEntries((prev) => prev.filter((e) => e.id !== id));
+      toast.success("Entry deleted successfully");
       if (selectedEntry?.id === id) {
         closeEditor();
       }
     } catch (error) {
       console.error("Error deleting entry:", error);
+      toast.error("An unexpected error occurred");
     }
   }, [selectedEntry?.id, closeEditor]);
 
