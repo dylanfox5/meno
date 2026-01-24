@@ -1,0 +1,77 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { JournalCard } from "./journal-card";
+import { EmptyState } from "./empty-state";
+import { useJournal } from "@/lib/journal-context";
+
+export function JournalDashboard() {
+  const { entries, openEditor, deleteEntry } = useJournal();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredEntries = useMemo(() => {
+    if (!searchQuery.trim()) return entries;
+    const query = searchQuery.toLowerCase();
+    return entries.filter(
+      (entry) =>
+        entry.title.toLowerCase().includes(query) ||
+        entry.content.toLowerCase().includes(query) ||
+        entry.scripture?.toLowerCase().includes(query) ||
+        entry.tags.some((tag) => tag.toLowerCase().includes(query))
+    );
+  }, [entries, searchQuery]);
+
+  return (
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="font-serif text-2xl font-semibold text-foreground">
+            Your Journal
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Reflect, write, and grow in your faith journey
+          </p>
+        </div>
+        <Button onClick={() => openEditor()} className="gap-1.5">
+          <Plus className="w-4 h-4" />
+          New Entry
+        </Button>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Search entries by title, content, scripture, or tags..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
+      {/* Entries List */}
+      {filteredEntries.length === 0 && !searchQuery ? (
+        <EmptyState onCreateNew={() => openEditor()} />
+      ) : filteredEntries.length === 0 ? (
+        <div className="py-12 text-center text-muted-foreground bg-card border border-border rounded-xl">
+          No entries found matching your search.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {filteredEntries.map((entry) => (
+            <JournalCard
+              key={entry.id}
+              entry={entry}
+              onSelect={openEditor}
+              onDelete={deleteEntry}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
