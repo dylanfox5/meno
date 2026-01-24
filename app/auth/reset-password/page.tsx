@@ -1,28 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { login } from "../auth/actions";
+import { useRouter } from "next/navigation";
+import { updatePassword } from "../../auth/reset-password-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import { toast } from "sonner";
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirm_password") as string;
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
     setIsLoading(true);
-    const result = await login(formData);
+    const result = await updatePassword(formData);
 
     if (result?.error) {
-      toast.error("Login failed", {
+      toast.error("Failed to reset password", {
         description: result.error,
       });
       setIsLoading(false);
+    } else {
+      toast.success("Password updated successfully");
+      router.push("/");
     }
-    // If successful, redirect happens in the action
   }
 
   return (
@@ -30,11 +46,9 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-serif text-3xl font-semibold text-foreground mb-2">
-            Welcome back
+            Set new password
           </h1>
-          <p className="text-muted-foreground">
-            Sign in to continue your reflection
-          </p>
+          <p className="text-muted-foreground">Enter your new password below</p>
         </div>
 
         <Card className="border-border">
@@ -42,61 +56,44 @@ export default function LoginPage() {
             <form action={handleSubmit} className="space-y-4">
               <div>
                 <Label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-foreground mb-1.5"
-                >
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div>
-                <Label
                   htmlFor="password"
                   className="block text-sm font-medium text-foreground mb-1.5"
                 >
-                  Password
+                  New Password
                 </Label>
                 <Input
                   id="password"
                   name="password"
                   type="password"
                   required
+                  minLength={6}
                   disabled={isLoading}
+                  placeholder="••••••••"
                 />
               </div>
 
-              <div className="flex items-center justify-end">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-primary hover:underline"
+              <div>
+                <Label
+                  htmlFor="confirm_password"
+                  className="block text-sm font-medium text-foreground mb-1.5"
                 >
-                  Forgot password?
-                </Link>
+                  Confirm Password
+                </Label>
+                <Input
+                  id="confirm_password"
+                  name="confirm_password"
+                  type="password"
+                  required
+                  minLength={6}
+                  disabled={isLoading}
+                  placeholder="••••••••"
+                />
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign in"}
+                {isLoading ? "Updating..." : "Update password"}
               </Button>
             </form>
-
-            <div className="mt-6 pt-6 border-t border-border">
-              <p className="text-center text-sm text-muted-foreground">
-                Don't have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="font-medium text-primary hover:underline"
-                >
-                  Sign up
-                </Link>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
