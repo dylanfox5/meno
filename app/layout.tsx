@@ -4,8 +4,9 @@ import { Lora, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebarWrapper } from "@/components/app-sidebar-wrapper"
 import { JournalProvider } from "@/lib/journal-context"
+import { createClient } from "@/lib/supabase/server"
 
 const _lora = Lora({ subsets: ["latin"], variable: '--font-lora' });
 const _inter = Inter({ subsets: ["latin"] });
@@ -33,21 +34,30 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  const showSidebar = !!user
+
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
         <JournalProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              {children}
-            </SidebarInset>
-          </SidebarProvider>
+          {showSidebar ? (
+            <SidebarProvider>
+              <AppSidebarWrapper />
+              <SidebarInset>
+                {children}
+              </SidebarInset>
+            </SidebarProvider>
+          ) : (
+            children
+          )}
         </JournalProvider>
         <Analytics />
       </body>

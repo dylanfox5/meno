@@ -12,6 +12,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useJournal } from "@/lib/journal-context";
+import { signout } from '@/app/auth/actions';
 
 import {
   Sidebar,
@@ -48,11 +49,23 @@ const navItems = [
   },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  displayName: string
+  email: string
+}
+
+export function AppSidebar({ displayName, email }: AppSidebarProps) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { openEditor } = useJournal();
+
+  const initials = displayName
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2) || 'U'
 
   return (
     <Sidebar collapsible="icon">
@@ -121,13 +134,13 @@ export function AppSidebar() {
                 >
                   <Avatar className="size-8 rounded-lg">
                     <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-                      JD
+                      {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">John Doe</span>
+                    <span className="truncate font-medium">{displayName}</span>
                     <span className="truncate text-xs text-muted-foreground">
-                      john@example.com
+                      {email}
                     </span>
                   </div>
                   <ChevronUp className="ml-auto size-4" />
@@ -139,16 +152,23 @@ export function AppSidebar() {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem>
-                  <User className="mr-2 size-4" />
-                  Profile
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    <User className="mr-2 size-4" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 size-4" />
-                  Settings
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="cursor-pointer">
+                    <Settings className="mr-2 size-4" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => signout()}
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
                   <LogOut className="mr-2 size-4" />
                   Sign out
                 </DropdownMenuItem>
