@@ -5,51 +5,26 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
 import { JournalEditor } from "@/components/dashboard/journal-editor";
-
-// Sample data - in production this would come from a database
-const initialEntries: JournalEntry[] = [
-  {
-    id: "1",
-    title: "Finding Peace in Uncertainty",
-    content:
-      "Today I found myself reflecting on Isaiah 55:8-9. In times of uncertainty, it's easy to feel overwhelmed by what we cannot control. But these verses remind me that God's ways are higher than my ways, and His thoughts higher than my thoughts.\n\nI'm learning to release my need for control and trust in His perfect plan. Even when I can't see the path ahead, I can rest in knowing that He sees it all.",
-    scripture: "Isaiah 55:8-9",
-    tags: ["trust", "peace", "surrender"],
-    createdAt: new Date(Date.now() - 86400000),
-    updatedAt: new Date(Date.now() - 86400000),
-  },
-  {
-    id: "2",
-    title: "Morning Gratitude",
-    content:
-      "This is the day that the Lord has made; let us rejoice and be glad in it.\n\nI woke up this morning with a heart full of gratitude. Sometimes we forget to thank God for the simple blessings - the breath in our lungs, the roof over our heads, the people who love us.\n\nToday I choose joy. Today I choose gratitude.",
-    scripture: "Psalm 118:24",
-    tags: ["gratitude", "morning", "joy"],
-    createdAt: new Date(Date.now() - 172800000),
-    updatedAt: new Date(Date.now() - 172800000),
-  },
-  {
-    id: "3",
-    title: "Lessons from the Sermon on the Mount",
-    content:
-      "Reading through the Beatitudes this morning, I was struck by how countercultural Jesus's teachings are. Blessed are the meek? Blessed are those who mourn? The world tells us to be strong, to never show weakness.\n\nBut Jesus invites us into a different kind of strength - one rooted in humility, compassion, and dependence on God.",
-    scripture: "Matthew 5:1-12",
-    tags: ["beatitudes", "humility", "teaching"],
-    createdAt: new Date(Date.now() - 345600000),
-    updatedAt: new Date(Date.now() - 345600000),
-  },
-];
+import { 
+  getJournalEntries, 
+  createJournalEntry, 
+  updateJournalEntry, 
+  deleteJournalEntry 
+} from "@/app/journal/actions";
 
 interface JournalContextType {
   entries: JournalEntry[];
+  isLoading: boolean;
   openEditor: (entry?: JournalEntry | null) => void;
   closeEditor: () => void;
-  saveEntry: (draft: JournalEntryDraft, id?: string) => void;
-  deleteEntry: (id: string) => void;
+  saveEntry: (draft: JournalEntryDraft, id?: string) => Promise<void>;
+  deleteEntry: (id: string) => Promise<void>;
+  refreshEntries: () => Promise<void>;
 }
 
 const JournalContext = createContext<JournalContextType | null>(null);
@@ -63,9 +38,27 @@ export function useJournal() {
 }
 
 export function JournalProvider({ children }: { children: ReactNode }) {
-  const [entries, setEntries] = useState<JournalEntry[]>(initialEntries);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+
+  // Fetch entries on mount
+  const refreshEntries = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await getJournalEntries();
+      setEntries(data);
+    } catch (error) {
+      console.error("Error loading journal entries:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshEntries();
+  }, [refreshEntries]);
 
   const openEditor = useCallback((entry?: JournalEntry | null) => {
     setSelectedEntry(entry || null);
@@ -77,36 +70,64 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     setSelectedEntry(null);
   }, []);
 
-  const saveEntry = useCallback((draft: JournalEntryDraft, id?: string) => {
-    if (id) {
-      setEntries((prev) =>
-        prev.map((e) =>
-          e.id === id ? { ...e, ...draft, updatedAt: new Date() } : e
-        )
-      );
-    } else {
-      const newEntry: JournalEntry = {
-        id: crypto.randomUUID(),
-        ...draft,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      setEntries((prev) => [newEntry, ...prev]);
+  const saveEntry = useCallback(async (draft: JournalEntryDraft, id?: string) => {
+    try {
+      if (id) {
+        // Update existing entry
+        const result = await updateJournalEntry(id, draft);
+        if (result.error) {
+          console.error("Error updating entry:", result.error);
+          return;
+        }
+        // Update local state optimistically
+        if (result.data) {
+          setEntries((prev) =>
+            prev.map((e) => (e.id === id ? result.data! : e))
+          );
+        }
+      } else {
+        // Create new entry
+        const result = await createJournalEntry({
+          title: draft.title,
+          content: draft.content || null,
+          scripture: draft.scripture || null,
+          type: draft.type || 'Life',
+        });
+        if (result.error) {
+          console.error("Error creating entry:", result.error);
+          return;
+        }
+        // Add new entry to local state
+        if (result.data) {
+          setEntries((prev) => [result.data!, ...prev]);
+        }
+      }
+      closeEditor();
+    } catch (error) {
+      console.error("Error saving entry:", error);
     }
-    setSelectedEntry(null);
-  }, []);
+  }, [closeEditor]);
 
-  const deleteEntry = useCallback((id: string) => {
-    setEntries((prev) => prev.filter((e) => e.id !== id));
-    if (selectedEntry?.id === id) {
-      setSelectedEntry(null);
-      setEditorOpen(false);
+  const deleteEntry = useCallback(async (id: string) => {
+    try {
+      const result = await deleteJournalEntry(id);
+      if (result.error) {
+        console.error("Error deleting entry:", result.error);
+        return;
+      }
+      // Remove from local state
+      setEntries((prev) => prev.filter((e) => e.id !== id));
+      if (selectedEntry?.id === id) {
+        closeEditor();
+      }
+    } catch (error) {
+      console.error("Error deleting entry:", error);
     }
-  }, [selectedEntry?.id]);
+  }, [selectedEntry?.id, closeEditor]);
 
   return (
     <JournalContext.Provider
-      value={{ entries, openEditor, closeEditor, saveEntry, deleteEntry }}
+      value={{ entries, isLoading, openEditor, closeEditor, saveEntry, deleteEntry, refreshEntries }}
     >
       {children}
       <JournalEditor

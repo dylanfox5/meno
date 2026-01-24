@@ -33,7 +33,7 @@ function getTimeOfDay(): string {
 }
 
 export function DashboardContent() {
-  const { entries, openEditor } = useJournal();
+  const { entries, isLoading, openEditor } = useJournal();
   const today = new Date();
   const dayOfYear = Math.floor(
     (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000
@@ -43,7 +43,7 @@ export function DashboardContent() {
   const stats = useMemo(() => {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const thisWeek = entries.filter((e) => e.createdAt >= weekAgo).length;
+    const thisWeek = entries.filter((e) => new Date(e.created_at) >= weekAgo).length;
     const scriptureCount = entries.filter((e) => e.scripture).length;
 
     let streak = 0;
@@ -53,7 +53,7 @@ export function DashboardContent() {
     for (let i = 0; i < 365; i++) {
       const checkDate = new Date(todayDate.getTime() - i * 86400000);
       const hasEntry = entries.some((e) => {
-        const entryDate = new Date(e.createdAt);
+        const entryDate = new Date(e.created_at);
         entryDate.setHours(0, 0, 0, 0);
         return entryDate.getTime() === checkDate.getTime();
       });
@@ -102,6 +102,16 @@ export function DashboardContent() {
       bgColor: "bg-chart-4/10",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-muted-foreground">Loading your entries...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
@@ -191,7 +201,7 @@ export function DashboardContent() {
                 </div>
               </div>
               <span className="text-xs text-muted-foreground">
-                {format(entry.createdAt, "MMM d")}
+                {format(new Date(entry.created_at), "MMM d")}
               </span>
             </button>
           ))}

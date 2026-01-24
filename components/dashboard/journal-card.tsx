@@ -21,7 +21,7 @@ interface JournalCardProps {
 
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
   const preview =
-    entry.content.slice(0, 150) + (entry.content.length > 150 ? "..." : "");
+    entry.content?.slice(0, 150) + (entry.content.length > 150 ? "..." : "");
 
   return (
     <Card
@@ -35,7 +35,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
               {entry.title || "Untitled Entry"}
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {format(entry.createdAt, "MMMM d, yyyy")}
+              {format(entry.created_at, "MMMM d, yyyy")}
             </p>
           </div>
           <DropdownMenu>
