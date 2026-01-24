@@ -20,8 +20,9 @@ interface JournalCardProps {
 }
 
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
-  const preview =
-    entry.content?.slice(0, 150) + (entry.content.length > 150 ? "..." : "");
+  const preview = entry.content
+    ? entry.content.slice(0, 150) + (entry.content.length > 150 ? "..." : "")
+    : "";
 
   return (
     <Card
