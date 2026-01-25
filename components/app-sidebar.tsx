@@ -75,10 +75,10 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
             <SidebarMenuButton size="lg" asChild tooltip="Meno">
               <Link href="/" className="flex items-center gap-3">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <span className="font-serif text-lg font-semibold">M</span>
+                  <span className="text-lg font-semibold">M</span>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-serif text-lg font-semibold">Meno</span>
+                  <span className="text-lg font-semibold">Meno</span>
                 </div>
               </Link>
             </SidebarMenuButton>

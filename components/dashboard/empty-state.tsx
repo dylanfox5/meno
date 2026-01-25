@@ -13,7 +13,7 @@ export function EmptyState({ onCreateNew }: EmptyStateProps) {
       <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
         <Feather className="w-8 h-8 text-primary" />
       </div>
-      <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
+      <h3 className="text-xl font-semibold text-foreground mb-2">
         Begin Your Journey
       </h3>
       <p className="text-muted-foreground max-w-sm mb-6">

@@ -44,7 +44,9 @@ export function DashboardContent() {
   const stats = useMemo(() => {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const thisWeek = entries.filter((e) => new Date(e.created_at) >= weekAgo).length;
+    const thisWeek = entries.filter(
+      (e) => new Date(e.created_at) >= weekAgo
+    ).length;
     const scriptureCount = entries.filter((e) => e.scripture).length;
 
     let streak = 0;
@@ -125,17 +127,18 @@ export function DashboardContent() {
               <p className="text-sm text-muted-foreground mb-1">
                 {format(today, "EEEE, MMMM d, yyyy")}
               </p>
-              <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
                 Good {getTimeOfDay()}, friend
               </h1>
               <p className="text-muted-foreground max-w-xl">
-                Welcome to Meno. Take a moment to pause, reflect, and connect with God through journaling.
+                Welcome to Meno. Take a moment to pause, reflect, and connect
+                with God through journaling.
               </p>
             </div>
           </div>
 
           <div className="mt-5 pt-5 border-t border-border">
-            <p className="font-serif text-lg text-foreground italic leading-relaxed">
+            <p className=" text-lg text-foreground italic leading-relaxed">
               {`"${verse.text}"`}
             </p>
             <p className="text-sm text-primary font-medium mt-2">
@@ -159,7 +162,7 @@ export function DashboardContent() {
             <p className="text-sm text-muted-foreground mb-1">
               {format(today, "EEEE, MMMM d, yyyy")}
             </p>
-            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
+            <h1 className=" text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
               Good {getTimeOfDay()}, friend
             </h1>
             <p className="text-muted-foreground max-w-xl">
@@ -170,7 +173,7 @@ export function DashboardContent() {
         </div>
 
         <div className="mt-5 pt-5 border-t border-border">
-          <p className="font-serif text-lg text-foreground italic leading-relaxed">
+          <p className=" text-lg text-foreground italic leading-relaxed">
             {`"${verse.text}"`}
           </p>
           <p className="text-sm text-primary font-medium mt-2">
@@ -203,7 +206,7 @@ export function DashboardContent() {
       {/* Recent Entries */}
       <div className="rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-serif text-xl font-semibold text-foreground">
+          <h2 className=" text-xl font-semibold text-foreground">
             Recent Entries
           </h2>
           <Button variant="ghost" size="sm" asChild>

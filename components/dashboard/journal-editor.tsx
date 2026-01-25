@@ -78,7 +78,7 @@ export function JournalEditor({
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <DialogTitle className="font-serif text-xl">
+            <DialogTitle className="text-xl">
               {entry ? "Edit Entry" : "New Journal Entry"}
             </DialogTitle>
             <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export function JournalEditor({
               placeholder="Entry Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="font-serif text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
+              className="text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
             />
           </div>
 
