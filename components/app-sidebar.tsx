@@ -12,7 +12,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useJournal } from "@/lib/journal-context";
-import { signout } from '@/app/auth/actions';
+import { signout } from "@/app/auth/actions";
 
 import {
   Sidebar,
@@ -35,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { LogoStained } from "./ui/logo-stained";
 
 const navItems = [
   {
@@ -50,8 +51,8 @@ const navItems = [
 ];
 
 interface AppSidebarProps {
-  displayName: string
-  email: string
+  displayName: string;
+  email: string;
 }
 
 export function AppSidebar({ displayName, email }: AppSidebarProps) {
@@ -60,12 +61,13 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
   const isCollapsed = state === "collapsed";
   const { openEditor } = useJournal();
 
-  const initials = displayName
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2) || 'U'
+  const initials =
+    displayName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "U";
 
   return (
     <Sidebar collapsible="icon">
@@ -74,12 +76,12 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="Meno">
               <Link href="/" className="flex items-center gap-3">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <span className="text-lg font-semibold">M</span>
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="text-lg font-semibold">Meno</span>
-                </div>
+                <LogoStained className="size-8" />
+                {!isCollapsed && (
+                  <div className="flex flex-col gap-0.5 leading-none">
+                    <span className="text-lg font-semibold">Meno</span>
+                  </div>
+                )}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
