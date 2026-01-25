@@ -23,7 +23,7 @@ export function WelcomeSection() {
           <p className="text-sm text-muted-foreground mb-1">
             {format(today, "EEEE, MMMM d, yyyy")}
           </p>
-          <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
             Good {getTimeOfDay()}, friend
           </h1>
           <p className="text-muted-foreground max-w-xl">
@@ -33,7 +33,7 @@ export function WelcomeSection() {
       </div>
       
       <div className="mt-5 pt-5 border-t border-border">
-        <p className="font-serif text-lg text-foreground italic leading-relaxed">
+        <p className="text-lg text-foreground italic leading-relaxed">
           {`"${verse.text}"`}
         </p>
         <p className="text-sm text-primary font-medium mt-2">

@@ -1,14 +1,18 @@
-import { ContentHeader } from "@/components/content-header";
-import { DashboardContent } from "@/components/dashboard/dashboard-content";
-import { ProtectedRoute } from "@/components/auth/protected-route";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import LandingPage from "./landing/page";
 
-export default function Home() {
-  return (
-    <ProtectedRoute>
-      <ContentHeader title="Dashboard" />
-      <main className="flex-1 overflow-auto">
-        <DashboardContent />
-      </main>
-    </ProtectedRoute>
-  );
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // If user is logged in, redirect to dashboard
+  if (user) {
+    redirect("/dashboard");
+  }
+
+  // Otherwise show landing page
+  return <LandingPage />;
 }
