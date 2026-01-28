@@ -19,10 +19,26 @@ interface JournalCardProps {
   onDelete: (id: string) => void;
 }
 
+function getTextPreview(html: string, maxLength: number = 150): string {
+  if (!html) return "";
+
+  let processed = html
+    .replace(/<\/?(p|div|br|h[1-6]|li|tr)[^>]*>/gi, " $& ")
+    .replace(/<li[^>]*>/gi, "• ")
+    .replace(/<\/li>/gi, " ");
+
+  const temp = document.createElement("div");
+  temp.innerHTML = processed;
+  const text = temp.textContent || temp.innerText || "";
+  const cleaned = text.replace(/\s+/g, " ").trim();
+
+  return cleaned.length > maxLength
+    ? cleaned.slice(0, maxLength) + "..."
+    : cleaned;
+}
+
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
-  const preview = entry.content
-    ? entry.content.slice(0, 150) + (entry.content.length > 150 ? "..." : "")
-    : "";
+  const preview = entry.content ? getTextPreview(entry.content) : "";
 
   return (
     <Card

@@ -44,13 +44,13 @@ export default async function LandingPage() {
             A quiet space for <span className="text-primary">reflection</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Journal your faith journey. Meditate on Scripture. Abide in the True
-            Vine.
+            Journal your walk with Christ. Connect Scripture to your daily life.
+            Find joy in abiding.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" asChild>
               <Link href="/signup" className="gap-2">
-                Start journaling free
+                Start journaling for free
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
@@ -77,9 +77,11 @@ export default async function LandingPage() {
                   Morning gratitude
                 </div>
                 <div className="text-muted-foreground leading-relaxed">
-                  This morning I'm reminded of Psalm 46:10 - "Be still, and know
-                  that I am God." In the quiet moments before the day begins, I
-                  feel Your presence most clearly...
+                  Lord, this morning I'm wrestling with anxiety about the week
+                  ahead. But You remind me in Psalm 46:10 to "Be still, and know
+                  that I am God." In the quiet before the day begins, I feel
+                  Your peace most clearly. Help me carry this stillness into the
+                  chaos...
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-primary">
@@ -111,8 +113,8 @@ export default async function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold">Daily journaling</h3>
               <p className="text-muted-foreground">
-                A distraction-free space to capture your thoughts, prayers, and
-                reflections.
+                A distraction-free space to pour out your heart before the
+                Lord—your thoughts, prayers, struggles, and praises.
               </p>
             </div>
 
@@ -122,8 +124,8 @@ export default async function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold">Scripture connection</h3>
               <p className="text-muted-foreground">
-                Connect entries with Bible verses and track your meditation
-                journey.
+                Anchor your reflections in God's Word. Reference Bible verses in
+                your entries and see how Scripture shapes your daily walk.
               </p>
             </div>
 
@@ -133,8 +135,8 @@ export default async function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold">Track your growth</h3>
               <p className="text-muted-foreground">
-                See journaling streaks and reflect on how God has worked in your
-                life.
+                See your journaling consistency and how often you're meditating
+                on Scripture. Reflect on God's faithfulness over time.
               </p>
             </div>
 
@@ -142,10 +144,10 @@ export default async function LandingPage() {
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Daily inspiration</h3>
+              <h3 className="text-xl font-semibold">Guided prompts</h3>
               <p className="text-muted-foreground">
-                Start each session with a curated Scripture verse to inspire
-                reflection.
+                Never stare at a blank page. Use thoughtful prompts to guide
+                your reflection when you need inspiration.
               </p>
             </div>
 
@@ -167,7 +169,7 @@ export default async function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold">Private & secure</h3>
               <p className="text-muted-foreground">
-                Your journal is completely private. Only you can access your
+                Your journal is between you and God. Only you can access your
                 entries.
               </p>
             </div>
@@ -190,8 +192,8 @@ export default async function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold">Works everywhere</h3>
               <p className="text-muted-foreground">
-                Journal from any device. Your entries sync seamlessly across all
-                platforms.
+                Journal from any device. Your reflections sync seamlessly so you
+                can seek Him anywhere.
               </p>
             </div>
           </div>
@@ -216,10 +218,11 @@ export default async function LandingPage() {
       <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-24 bg-muted/30">
         <div className="max-w-3xl mx-auto text-center space-y-8">
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            Start your journey today
+            Begin reflecting today
           </h2>
           <p className="text-xl text-muted-foreground">
-            Join others who are growing closer to God through daily reflection.
+            Join believers who are seeking deeper joy in Christ through daily
+            reflection and Scripture meditation.
           </p>
           <Button size="lg" asChild>
             <Link href="/signup" className="gap-2">
@@ -239,7 +242,8 @@ export default async function LandingPage() {
               <span className="text-lg font-semibold">Meno</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2026 Meno. Built with care for spiritual growth.
+              © 2026 Meno. Built for the glorifying of Christ and the joy of His
+              people.
             </p>
           </div>
         </div>
