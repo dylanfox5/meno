@@ -5,7 +5,6 @@ import { BookOpen, Save, Plus, X } from "lucide-react";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -13,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { TiptapEditor } from "../editor/tiptap-editor";
 
 interface JournalEditorProps {
   entry?: JournalEntry | null;
@@ -118,12 +118,13 @@ export function JournalEditor({
             />
           </div>
 
+          {/* Replace the Textarea with TiptapEditor */}
           <div className="flex-1">
-            <Textarea
+            <TiptapEditor
+              content={content || ""}
+              onChange={(newContent) => setContent(newContent)}
               placeholder="What is God teaching you today? Write your thoughts, prayers, and reflections here..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="min-h-[250px] resize-none shadow-none leading-relaxed border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60"
+              autoFocus={true}
             />
           </div>
 

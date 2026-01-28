@@ -10,13 +10,14 @@ import {
 } from "react";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
 import { JournalEditor } from "@/components/dashboard/journal-editor";
-import { 
-  getJournalEntries, 
-  createJournalEntry, 
-  updateJournalEntry, 
-  deleteJournalEntry 
+import {
+  getJournalEntries,
+  createJournalEntry,
+  updateJournalEntry,
+  deleteJournalEntry,
 } from "@/app/journal/actions";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
 
 interface JournalContextType {
   entries: JournalEntry[];
@@ -43,13 +44,14 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
-  // Fetch entries on mount
   const refreshEntries = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await getJournalEntries();
       setEntries(data);
+      setHasLoadedOnce(true);
     } catch (error) {
       console.error("Error loading journal entries:", error);
       toast.error("Failed to load journal entries");
@@ -59,8 +61,33 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshEntries();
-  }, [refreshEntries]);
+    const supabase = createClient();
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        refreshEntries();
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only refresh on actual sign-in, not on token refresh or initial load
+      if (event === "SIGNED_IN" && !hasLoadedOnce && session) {
+        refreshEntries();
+      } else if (event === "SIGNED_OUT") {
+        setEntries([]);
+        setIsLoading(false);
+        setHasLoadedOnce(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [refreshEntries, hasLoadedOnce]);
 
   const openEditor = useCallback((entry?: JournalEntry | null) => {
     setSelectedEntry(entry || null);
@@ -72,76 +99,85 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     setSelectedEntry(null);
   }, []);
 
-  const saveEntry = useCallback(async (draft: JournalEntryDraft, id?: string) => {
-    try {
-      if (id) {
-        // Update existing entry
-        const result = await updateJournalEntry(id, draft);
-        if (result.error) {
-          toast.error("Failed to update entry", {
-            description: result.error
+  const saveEntry = useCallback(
+    async (draft: JournalEntryDraft, id?: string) => {
+      try {
+        if (id) {
+          const result = await updateJournalEntry(id, draft);
+          if (result.error) {
+            toast.error("Failed to update entry", {
+              description: result.error,
+            });
+            return;
+          }
+          if (result.data) {
+            setEntries((prev) =>
+              prev.map((e) => (e.id === id ? result.data! : e))
+            );
+            toast.success("Entry updated successfully");
+          }
+        } else {
+          const result = await createJournalEntry({
+            title: draft.title,
+            content: draft.content || null,
+            scripture: draft.scripture || null,
+            type: draft.type || "Life",
+            tags: [],
           });
-          return;
+          if (result.error) {
+            toast.error("Failed to create entry", {
+              description: result.error,
+            });
+            return;
+          }
+          if (result.data) {
+            setEntries((prev) => [result.data!, ...prev]);
+            toast.success("Entry created successfully");
+          }
         }
-        // Update local state optimistically
-        if (result.data) {
-          setEntries((prev) =>
-            prev.map((e) => (e.id === id ? result.data! : e))
-          );
-          toast.success("Entry updated successfully");
-        }
-      } else {
-        // Create new entry
-        const result = await createJournalEntry({
-          title: draft.title,
-          content: draft.content || null,
-          scripture: draft.scripture || null,
-          type: draft.type || 'Life',
-          tags: []
-        });
-        if (result.error) {
-          toast.error("Failed to create entry", {
-            description: result.error
-          });
-          return;
-        }
-        // Add new entry to local state
-        if (result.data) {
-          setEntries((prev) => [result.data!, ...prev]);
-          toast.success("Entry created successfully");
-        }
-      }
-      closeEditor();
-    } catch (error) {
-      console.error("Error saving entry:", error);
-      toast.error("An unexpected error occurred");
-    }
-  }, [closeEditor]);
-
-  const deleteEntry = useCallback(async (id: string) => {
-    try {
-      const result = await deleteJournalEntry(id);
-      if (result.error) {
-        toast.error("Failed to delete entry", {
-          description: result.error
-        });
-        return;
-      }
-      // Remove from local state
-      setEntries((prev) => prev.filter((e) => e.id !== id));
-      toast.success("Entry deleted successfully");
-      if (selectedEntry?.id === id) {
         closeEditor();
+      } catch (error) {
+        console.error("Error saving entry:", error);
+        toast.error("An unexpected error occurred");
       }
-    } catch (error) {
-      console.error("Error deleting entry:", error);
-      toast.error("An unexpected error occurred");
-    }
-  }, [selectedEntry?.id, closeEditor]);
+    },
+    [closeEditor]
+  );
+
+  const deleteEntry = useCallback(
+    async (id: string) => {
+      try {
+        const result = await deleteJournalEntry(id);
+        if (result.error) {
+          toast.error("Failed to delete entry", {
+            description: result.error,
+          });
+          return;
+        }
+        setEntries((prev) => prev.filter((e) => e.id !== id));
+        toast.success("Entry deleted successfully");
+        if (selectedEntry?.id === id) {
+          closeEditor();
+        }
+      } catch (error) {
+        console.error("Error deleting entry:", error);
+        toast.error("An unexpected error occurred");
+      }
+    },
+    [selectedEntry?.id, closeEditor]
+  );
 
   return (
     <JournalContext.Provider
-      value={{ entries, isLoading, openEditor, closeEditor, saveEntry, deleteEntry, refreshEntries }}
+      value={{
+        entries,
+        isLoading,
+        openEditor,
+        closeEditor,
+        saveEntry,
+        deleteEntry,
+        refreshEntries,
+      }}
     >
       {children}
       <JournalEditor
