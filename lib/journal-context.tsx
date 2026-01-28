@@ -6,8 +6,10 @@ import {
   useState,
   useCallback,
   useEffect,
+  useRef,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
 import { JournalEditor } from "@/components/dashboard/journal-editor";
 import {
@@ -44,14 +46,16 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const pathname = usePathname();
+  const hasLoadedRef = useRef(false);
+  const previousAuthStateRef = useRef<boolean | null>(null);
 
   const refreshEntries = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await getJournalEntries();
       setEntries(data);
-      setHasLoadedOnce(true);
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error("Error loading journal entries:", error);
       toast.error("Failed to load journal entries");
@@ -63,31 +67,50 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        refreshEntries();
-      } else {
+    const checkAuthAndLoad = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const isAuthenticated = !!session;
+
+      // Only fetch if:
+      // 1. We haven't loaded yet, OR
+      // 2. Auth state changed from unauthenticated to authenticated
+      const authStateChanged =
+        previousAuthStateRef.current === false && isAuthenticated;
+
+      if (isAuthenticated && (!hasLoadedRef.current || authStateChanged)) {
+        await refreshEntries();
+      } else if (!isAuthenticated) {
+        setEntries([]);
         setIsLoading(false);
+        hasLoadedRef.current = false;
       }
-    });
+
+      previousAuthStateRef.current = isAuthenticated;
+    };
+
+    checkAuthAndLoad();
+  }, [pathname, refreshEntries]);
+
+  useEffect(() => {
+    const supabase = createClient();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      // Only refresh on actual sign-in, not on token refresh or initial load
-      if (event === "SIGNED_IN" && !hasLoadedOnce && session) {
-        refreshEntries();
-      } else if (event === "SIGNED_OUT") {
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
         setEntries([]);
         setIsLoading(false);
-        setHasLoadedOnce(false);
+        hasLoadedRef.current = false;
+        previousAuthStateRef.current = false;
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [refreshEntries, hasLoadedOnce]);
+  }, []);
 
   const openEditor = useCallback((entry?: JournalEntry | null) => {
     setSelectedEntry(entry || null);
