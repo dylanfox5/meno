@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { BookOpen, MoreHorizontal, Trash2 } from "lucide-react";
+import { BookOpen, MoreHorizontal, Trash2, Heart, Book } from "lucide-react";
 import type { JournalEntry } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,15 +39,42 @@ function getTextPreview(html: string, maxLength: number = 150): string {
 
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
   const preview = entry.content ? getTextPreview(entry.content) : "";
+  const isScripture = entry.type === "Scripture";
 
   return (
     <Card
-      className="cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30"
+      className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 ${
+        isScripture
+          ? "border-l-4 border-l-primary"
+          : "border-l-4 border-l-emerald-500"
+      }`}
       onClick={() => onSelect(entry)}
     >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Badge
+                variant={isScripture ? "default" : "secondary"}
+                className={`text-xs ${
+                  isScripture
+                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                    : "bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20"
+                }`}
+              >
+                {isScripture ? (
+                  <>
+                    <Book className="w-3 h-3 mr-1" />
+                    Scripture
+                  </>
+                ) : (
+                  <>
+                    <Heart className="w-3 h-3 mr-1" />
+                    Life
+                  </>
+                )}
+              </Badge>
+            </div>
             <h3 className="text-lg font-medium text-foreground truncate">
               {entry.title || "Untitled Entry"}
             </h3>

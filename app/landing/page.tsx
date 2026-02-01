@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, PenLine, Heart, Sparkles, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
-import { LogoStained } from "@/components/ui/logo-stained";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -23,8 +22,7 @@ export default async function LandingPage() {
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <LogoStained className="size-12" />
-            <span className="text-xl font-semibold">Meno</span>
+            <Logo />
           </Link>
           <div className="flex items-center gap-3">
             <Button variant="ghost" asChild>
@@ -238,8 +236,7 @@ export default async function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <LogoStained className="w-6 h-6" />
-              <span className="text-lg font-semibold">Meno</span>
+              <Logo className="size-4" />
             </div>
             <p className="text-sm text-muted-foreground">
               © 2026 Meno. Built for the glorifying of Christ and the joy of His

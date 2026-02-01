@@ -1,17 +1,17 @@
 import Image from "next/image";
 
-interface LogoProps {
+interface LogoIconProps {
   className?: string;
 }
 
-export function Logo({ className = "" }: LogoProps) {
+export function LogoIcon({ className = "" }: LogoIconProps) {
   return (
     <Image
-      src="/logo/meno.png"
+      src="/logo/meno-icon.png"
       alt="Meno logo"
       width={500}
       height={500}
-      className={`h-36 w-auto ${className}`}
+      className={`w-auto ${className}`}
       priority
     />
   );

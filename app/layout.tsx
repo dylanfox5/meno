@@ -7,8 +7,7 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebarWrapper } from "@/components/app-sidebar-wrapper";
 import { JournalProvider } from "@/lib/journal-context";
 import { createClient } from "@/lib/supabase/server";
-import { Toaster } from "@/components/ui/sonner"
-
+import { Toaster } from "@/components/ui/sonner";
 
 const _lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
 const _inter = Inter({ subsets: ["latin"] });
@@ -21,19 +20,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
+        url: "/icon.png",
       },
     ],
-    apple: "/apple-icon.png",
   },
 };
 

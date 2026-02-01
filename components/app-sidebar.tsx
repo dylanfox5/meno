@@ -35,7 +35,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LogoStained } from "./ui/logo-stained";
+import { Logo } from "@/components/ui/logo";
+import { LogoIcon } from "./ui/logo-icon";
 
 const navItems = [
   {
@@ -76,11 +77,10 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="Meno">
               <Link href="/" className="flex items-center gap-3">
-                <LogoStained className="size-8" />
-                {!isCollapsed && (
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="text-lg font-semibold">Meno</span>
-                  </div>
+                {isCollapsed ? (
+                  <LogoIcon className="size-8" />
+                ) : (
+                  <Logo className="h-8" />
                 )}
               </Link>
             </SidebarMenuButton>
