@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BookOpen, Save, Plus, X } from "lucide-react";
+import { BookOpen, Save, Plus, X, Sparkles } from "lucide-react";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TiptapEditor } from "../editor/tiptap-editor";
+import { getRandomPrompt } from "@/lib/prompts";
+import { toast } from "sonner";
 
 interface JournalEditorProps {
   entry?: JournalEntry | null;
@@ -30,16 +39,20 @@ export function JournalEditor({
   const [title, setTitle] = useState(entry?.title || "");
   const [content, setContent] = useState(entry?.content || "");
   const [scripture, setScripture] = useState(entry?.scripture || "");
+  const [type, setType] = useState<"Life" | "Scripture">(entry?.type || "Life");
   const [tags, setTags] = useState<string[]>(entry?.tags || []);
   const [newTag, setNewTag] = useState("");
+  const [currentPrompt, setCurrentPrompt] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
       setTitle(entry?.title || "");
       setContent(entry?.content || "");
       setScripture(entry?.scripture || "");
+      setType(entry?.type || "Life");
       setTags(entry?.tags || []);
       setNewTag("");
+      setCurrentPrompt(null);
     }
   }, [entry, open]);
 
@@ -51,6 +64,7 @@ export function JournalEditor({
         title: title.trim() || "Untitled Entry",
         content: content.trim(),
         scripture: scripture.trim() || undefined,
+        type,
         tags,
       },
       entry?.id
@@ -68,6 +82,14 @@ export function JournalEditor({
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleGetPrompt = () => {
+    const prompt = getRandomPrompt(type);
+    setCurrentPrompt(prompt);
+    toast.success("Prompt generated!", {
+      description: "Use this to inspire your journaling",
+    });
   };
 
   return (
@@ -99,13 +121,25 @@ export function JournalEditor({
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-          <div>
+          <div className="flex gap-3">
             <Input
               placeholder="Entry Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
+              className="flex-1 text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
             />
+            <Select
+              value={type}
+              onValueChange={(value: "Life" | "Scripture") => setType(value)}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Entry type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Life">Life</SelectItem>
+                <SelectItem value="Scripture">Scripture</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 border border-border">
@@ -116,6 +150,27 @@ export function JournalEditor({
               onChange={(e) => setScripture(e.target.value)}
               className="border-0 bg-transparent h-auto focus-visible:ring-0 text-sm shadow-none"
             />
+          </div>
+
+          {/* Prompt inspiration section */}
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleGetPrompt}
+              className="shrink-0 h-auto py-2"
+            >
+              <Sparkles className="w-4 h-4 mr-1.5" />
+              Get Prompt
+            </Button>
+            {currentPrompt && (
+              <div className="flex-1 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
+                <p className="text-sm text-foreground italic leading-relaxed">
+                  {currentPrompt}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Replace the Textarea with TiptapEditor */}
