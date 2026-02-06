@@ -36,8 +36,8 @@ export async function signup(formData: FormData) {
     return { error: error.message };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/dashboard");
+  // Return success instead of redirecting
+  return { success: true, email: data.email };
 }
 
 export async function signout() {
