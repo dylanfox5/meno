@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { BookOpen, MoreHorizontal, Trash2, Heart, Book } from "lucide-react";
 import type { JournalEntry } from "@/lib/types";
+import { formatScriptureReferences } from "@/lib/scripture-utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,20 @@ function getTextPreview(html: string, maxLength: number = 150): string {
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
   const preview = entry.content ? getTextPreview(entry.content) : "";
   const isScripture = entry.type === "Scripture";
+  
+  // Format scripture references for display with truncation
+  const scriptureDisplay = 
+    entry.scripture && Array.isArray(entry.scripture) && entry.scripture.length > 0
+      ? (() => {
+          const refs = entry.scripture;
+          if (refs.length <= 3) {
+            return formatScriptureReferences(refs);
+          }
+          // Show first 3 and indicate more
+          const firstThree = formatScriptureReferences(refs.slice(0, 3));
+          return `${firstThree} +${refs.length - 3} more`;
+        })()
+      : null;
 
   return (
     <Card
@@ -50,7 +65,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
       }`}
       onClick={() => onSelect(entry)}
     >
-      <CardHeader className="pb-2">
+      <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
@@ -103,11 +118,11 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        {entry.scripture && (
+      <CardContent className="px-6">
+        {scriptureDisplay && (
           <div className="flex items-center gap-1.5 text-sm text-primary mb-2">
             <BookOpen className="w-3.5 h-3.5" />
-            <span className="font-medium">{entry.scripture}</span>
+            <span className="font-medium">{scriptureDisplay}</span>
           </div>
         )}
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
