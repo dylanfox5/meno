@@ -22,6 +22,8 @@ import {
 import { TiptapEditor } from "../editor/tiptap-editor";
 import { getRandomPrompt } from "@/lib/prompts";
 import { toast } from "sonner";
+import type { ScriptureReference } from "@/lib/scripture-utils";
+import { ScriptureInput } from "../scripture/scripture-input";
 
 interface JournalEditorProps {
   entry?: JournalEntry | null;
@@ -38,7 +40,9 @@ export function JournalEditor({
 }: JournalEditorProps) {
   const [title, setTitle] = useState(entry?.title || "");
   const [content, setContent] = useState(entry?.content || "");
-  const [scripture, setScripture] = useState(entry?.scripture || "");
+  const [scripture, setScripture] = useState<ScriptureReference[]>(
+    entry?.scripture || []
+  );
   const [type, setType] = useState<"Life" | "Scripture">(entry?.type || "Life");
   const [tags, setTags] = useState<string[]>(entry?.tags || []);
   const [newTag, setNewTag] = useState("");
@@ -48,7 +52,7 @@ export function JournalEditor({
     if (open) {
       setTitle(entry?.title || "");
       setContent(entry?.content || "");
-      setScripture(entry?.scripture || "");
+      setScripture(entry?.scripture || []);
       setType(entry?.type || "Life");
       setTags(entry?.tags || []);
       setNewTag("");
@@ -63,7 +67,7 @@ export function JournalEditor({
       {
         title: title.trim() || "Untitled Entry",
         content: content.trim(),
-        scripture: scripture.trim() || undefined,
+        scripture: scripture.length > 0 ? scripture : undefined,
         type,
         tags,
       },
@@ -142,14 +146,8 @@ export function JournalEditor({
             </Select>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 border border-border">
-            <BookOpen className="w-4 h-4 text-primary shrink-0" />
-            <Input
-              placeholder="Scripture reference (e.g., John 3:16)"
-              value={scripture}
-              onChange={(e) => setScripture(e.target.value)}
-              className="border-0 bg-transparent h-auto focus-visible:ring-0 text-sm shadow-none"
-            />
+          <div className="px-3 py-3 rounded-lg bg-muted/50 border border-border">
+            <ScriptureInput value={scripture} onChange={setScripture} />
           </div>
 
           {/* Prompt inspiration section */}

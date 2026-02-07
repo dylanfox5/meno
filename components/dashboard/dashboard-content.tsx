@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useJournal } from "@/lib/journal-context";
 import { EmptyState } from "@/components/dashboard/empty-state";
+import { formatScriptureReferences } from "@/lib/scripture-utils";
 
 const verses = [
   { text: "Be still, and know that I am God.", reference: "Psalm 46:10" },
@@ -47,7 +48,9 @@ export function DashboardContent() {
     const thisWeek = entries.filter(
       (e) => new Date(e.created_at) >= weekAgo
     ).length;
-    const scriptureCount = entries.filter((e) => e.scripture).length;
+    const scriptureCount = entries.filter(
+      (e) => e.scripture && Array.isArray(e.scripture) && e.scripture.length > 0
+    ).length;
 
     let streak = 0;
     const todayDate = new Date();
@@ -218,33 +221,53 @@ export function DashboardContent() {
         </div>
 
         <div className="space-y-3">
-          {entries.slice(0, 3).map((entry) => (
-            <button
-              type="button"
-              key={entry.id}
-              onClick={() => openEditor(entry)}
-              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors group text-left"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <PenLine className="w-4 h-4 text-primary" />
+          {entries.slice(0, 3).map((entry) => {
+            // Truncate scripture for cleaner mobile display
+            const scriptureDisplay =
+              entry.scripture &&
+              Array.isArray(entry.scripture) &&
+              entry.scripture.length > 0
+                ? (() => {
+                    const refs = entry.scripture;
+                    if (refs.length <= 2) {
+                      return formatScriptureReferences(refs);
+                    }
+                    // Show first 2 and indicate more
+                    const firstTwo = formatScriptureReferences(
+                      refs.slice(0, 2)
+                    );
+                    return `${firstTwo} +${refs.length - 2} more`;
+                  })()
+                : null;
+
+            return (
+              <button
+                type="button"
+                key={entry.id}
+                onClick={() => openEditor(entry)}
+                className="w-full flex items-start sm:items-center justify-between gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors group text-left"
+              >
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <div className="w-10 h-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <PenLine className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                      {entry.title}
+                    </h3>
+                    {scriptureDisplay && (
+                      <p className="text-xs text-muted-foreground truncate">
+                        {scriptureDisplay}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    {entry.title}
-                  </h3>
-                  {entry.scripture && (
-                    <p className="text-xs text-muted-foreground">
-                      {entry.scripture}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {format(new Date(entry.created_at), "MMM d")}
-              </span>
-            </button>
-          ))}
+                <span className="text-xs text-muted-foreground shrink-0 sm:text-right">
+                  {format(new Date(entry.created_at), "MMM d")}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="mt-4 pt-4 border-t border-border">

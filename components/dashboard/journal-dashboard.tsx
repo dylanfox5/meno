@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { JournalCard } from "./journal-card";
 import { EmptyState } from "./empty-state";
 import { useJournal } from "@/lib/journal-context";
+import { formatScriptureReferences } from "@/lib/scripture-utils";
 
 export function JournalDashboard() {
   const { entries, isLoading, openEditor, deleteEntry } = useJournal();
@@ -19,7 +20,11 @@ export function JournalDashboard() {
       (entry) =>
         entry.title.toLowerCase().includes(query) ||
         entry.content?.toLowerCase().includes(query) ||
-        entry.scripture?.toLowerCase().includes(query) ||
+        (entry.scripture && Array.isArray(entry.scripture)
+          ? formatScriptureReferences(entry.scripture)
+              .toLowerCase()
+              .includes(query)
+          : false) ||
         entry.tags?.some((tag) => tag.toLowerCase().includes(query))
     );
   }, [entries, searchQuery]);
@@ -43,10 +48,11 @@ export function JournalDashboard() {
             Your Journal
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {entries.length === 0 
-              ? "Start your faith journey" 
-              : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`
-            }
+            {entries.length === 0
+              ? "Start your faith journey"
+              : `${entries.length} ${
+                  entries.length === 1 ? "entry" : "entries"
+                }`}
           </p>
         </div>
         <Button onClick={() => openEditor()} className="gap-1.5">
