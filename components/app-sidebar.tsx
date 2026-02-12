@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
+  Book,
   ChevronUp,
   LogOut,
   Settings,
@@ -48,6 +49,11 @@ const navItems = [
     title: "Journal",
     url: "/journal",
     icon: BookOpen,
+  },
+  {
+    title: "Bible Intake",
+    url: "/bible-intake",
+    icon: Book,
   },
 ];
 

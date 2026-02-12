@@ -3,9 +3,9 @@
 export interface ScriptureReference {
   book: string;
   chapter: number;
-  startVerse: number;
+  startVerse?: number; // Optional for whole chapters
   endVerse?: number;
-  endChapter?: number; // For chapter ranges like Matthew 5:1-7:29
+  endChapter?: number; // For chapter ranges like Matthew 5-7
 }
 
 // Complete list of Bible books
@@ -274,12 +274,22 @@ export function normalizeBookName(input: string): string | null {
  * Format a scripture reference as a readable string
  */
 export function formatScriptureReference(ref: ScriptureReference): string {
-  // Handle chapter ranges (e.g., Matthew 5:1-7:29)
+  // Whole chapter range (e.g., Matthew 5-7)
+  if (ref.endChapter && !ref.startVerse) {
+    return `${ref.book} ${ref.chapter}-${ref.endChapter}`;
+  }
+
+  // Whole single chapter (e.g., Romans 8)
+  if (!ref.startVerse) {
+    return `${ref.book} ${ref.chapter}`;
+  }
+
+  // Chapter range with verses (e.g., Matthew 5:1-7:29)
   if (ref.endChapter && ref.endChapter !== ref.chapter) {
     return `${ref.book} ${ref.chapter}:${ref.startVerse}-${ref.endChapter}:${ref.endVerse}`;
   }
 
-  // Handle verse ranges within same chapter (e.g., John 3:16-18)
+  // Verse range within same chapter (e.g., John 3:16-18)
   const verses = ref.endVerse
     ? `${ref.startVerse}-${ref.endVerse}`
     : `${ref.startVerse}`;
@@ -296,58 +306,135 @@ export function formatScriptureReferences(refs: ScriptureReference[]): string {
 
 /**
  * Parse a scripture reference string into structured data
- * Examples: "John 3:16", "Genesis 1:1-5", "Matthew 5:1-7:29"
+ * Supports:
+ * - "Romans 8" (whole chapter)
+ * - "Genesis 1-3" (chapter range)
+ * - "John 3:16" (single verse)
+ * - "Genesis 1:1-5" (verse range)
+ * - "Matthew 5:1-7:29" (chapter range with verses)
  */
 export function parseScriptureReference(
   input: string
 ): ScriptureReference | null {
   const trimmed = input.trim();
 
-  // Pattern: Book Chapter:Verse or Book Chapter:Verse-Verse or Book Chapter:Verse-Chapter:Verse
-  const pattern = /^(.+?)\s+(\d+):(\d+)(?:-(\d+):(\d+)|-(\d+))?$/;
-  const match = trimmed.match(pattern);
+  // Try to find where the book name ends and the reference begins
+  // We'll try to match the longest possible book name first
 
-  if (!match) {
-    return null;
+  let bookName: string | null = null;
+  let refPart = "";
+
+  // Sort books by length (longest first) to match longer names first
+  const sortedBooks = [...BIBLE_BOOKS].sort((a, b) => b.length - a.length);
+
+  // Try to match full book names first
+  for (const book of sortedBooks) {
+    const bookLower = book.toLowerCase();
+    const inputLower = trimmed.toLowerCase();
+
+    if (inputLower.startsWith(bookLower)) {
+      // Check if there's a space or digit after the book name
+      const afterBook = trimmed.substring(book.length).trim();
+      if (afterBook.length > 0 && /^[\d\s-:]/.test(afterBook)) {
+        bookName = book;
+        refPart = afterBook;
+        break;
+      }
+    }
   }
 
-  const bookName = normalizeBookName(match[1]);
+  // If no full book name matched, try abbreviations
+  if (!bookName) {
+    // Try matching abbreviations
+    const words = trimmed.split(/\s+/);
+
+    // Try 1-3 words for book abbreviation
+    for (
+      let wordCount = Math.min(3, words.length);
+      wordCount >= 1;
+      wordCount--
+    ) {
+      const potentialBook = words.slice(0, wordCount).join(" ");
+      const normalized = normalizeBookName(potentialBook);
+
+      if (normalized) {
+        bookName = normalized;
+        refPart = words.slice(wordCount).join(" ").trim();
+        break;
+      }
+    }
+  }
+
   if (!bookName) {
     return null;
   }
 
-  const chapter = parseInt(match[2], 10);
-  const startVerse = parseInt(match[3], 10);
+  // Now parse the reference part
+  if (!refPart) {
+    return null;
+  }
 
-  // Check for chapter range (e.g., 5:1-7:29)
-  if (match[4] && match[5]) {
-    const endChapter = parseInt(match[4], 10);
-    const endVerse = parseInt(match[5], 10);
+  // Pattern 1: Whole chapter range (e.g., "5-7")
+  const chapterRangePattern = /^(\d+)\s*-\s*(\d+)$/;
+  const chapterRangeMatch = refPart.match(chapterRangePattern);
+  if (chapterRangeMatch) {
+    return {
+      book: bookName,
+      chapter: parseInt(chapterRangeMatch[1], 10),
+      endChapter: parseInt(chapterRangeMatch[2], 10),
+    };
+  }
 
+  // Pattern 2: Single whole chapter (e.g., "8")
+  const wholeChapterPattern = /^(\d+)$/;
+  const wholeChapterMatch = refPart.match(wholeChapterPattern);
+  if (wholeChapterMatch) {
+    return {
+      book: bookName,
+      chapter: parseInt(wholeChapterMatch[1], 10),
+    };
+  }
+
+  // Pattern 3: Chapter with verses (e.g., "3:16" or "3:16-18" or "5:1-7:29")
+  const versePattern =
+    /^(\d+)\s*:\s*(\d+)(?:\s*-\s*(\d+)\s*:\s*(\d+)|\s*-\s*(\d+))?$/;
+  const verseMatch = refPart.match(versePattern);
+  if (verseMatch) {
+    const chapter = parseInt(verseMatch[1], 10);
+    const startVerse = parseInt(verseMatch[2], 10);
+
+    // Check for chapter range with verses (e.g., 5:1-7:29)
+    if (verseMatch[3] && verseMatch[4]) {
+      const endChapter = parseInt(verseMatch[3], 10);
+      const endVerse = parseInt(verseMatch[4], 10);
+
+      return {
+        book: bookName,
+        chapter,
+        startVerse,
+        endChapter,
+        endVerse,
+      };
+    }
+
+    // Check for verse range within same chapter (e.g., 3:16-18)
+    if (verseMatch[5]) {
+      const endVerse = parseInt(verseMatch[5], 10);
+      return {
+        book: bookName,
+        chapter,
+        startVerse,
+        endVerse,
+      };
+    }
+
+    // Single verse
     return {
       book: bookName,
       chapter,
       startVerse,
-      endChapter,
-      endVerse,
     };
   }
 
-  // Check for verse range (e.g., 3:16-18)
-  if (match[6]) {
-    const endVerse = parseInt(match[6], 10);
-    return {
-      book: bookName,
-      chapter,
-      startVerse,
-      endVerse,
-    };
-  }
-
-  // Single verse
-  return {
-    book: bookName,
-    chapter,
-    startVerse,
-  };
+  return null;
 }

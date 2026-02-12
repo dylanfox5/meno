@@ -8,6 +8,7 @@ import { AppSidebarWrapper } from "@/components/app-sidebar-wrapper";
 import { JournalProvider } from "@/lib/journal-context";
 import { createClient } from "@/lib/supabase/server";
 import { Toaster } from "@/components/ui/sonner";
+import { BibleReadingProvider } from "@/lib/bible-reading-context";
 
 const _lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
 const _inter = Inter({ subsets: ["latin"] });
@@ -42,14 +43,16 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`font-sans antialiased`}>
         <JournalProvider>
-          {showSidebar ? (
-            <SidebarProvider>
-              <AppSidebarWrapper />
-              <SidebarInset>{children}</SidebarInset>
-            </SidebarProvider>
-          ) : (
-            children
-          )}
+          <BibleReadingProvider>
+            {showSidebar ? (
+              <SidebarProvider>
+                <AppSidebarWrapper />
+                <SidebarInset>{children}</SidebarInset>
+              </SidebarProvider>
+            ) : (
+              children
+            )}
+          </BibleReadingProvider>
         </JournalProvider>
         <Toaster />
         <Analytics />
