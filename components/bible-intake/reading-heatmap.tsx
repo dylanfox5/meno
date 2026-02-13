@@ -15,31 +15,11 @@ interface ReadingHeatmapProps {
   data: ReadingHeatmapDay[];
 }
 
-// Get intensity level based on reading count
-function getIntensityLevel(count: number): number {
-  if (count === 0) return 0;
-  if (count === 1) return 1;
-  if (count === 2) return 2;
-  if (count === 3) return 3;
-  return 4; // 4+ readings
-}
-
-// Get color class based on intensity
-function getColorClass(level: number): string {
-  switch (level) {
-    case 0:
-      return "bg-muted hover:bg-muted/80";
-    case 1:
-      return "bg-emerald-200 dark:bg-emerald-900 hover:bg-emerald-300 dark:hover:bg-emerald-800";
-    case 2:
-      return "bg-emerald-400 dark:bg-emerald-700 hover:bg-emerald-500 dark:hover:bg-emerald-600";
-    case 3:
-      return "bg-emerald-600 dark:bg-emerald-600 hover:bg-emerald-700 dark:hover:bg-emerald-500";
-    case 4:
-      return "bg-emerald-800 dark:bg-emerald-400 hover:bg-emerald-900 dark:hover:bg-emerald-300";
-    default:
-      return "bg-muted";
-  }
+// Binary color - either read or not read
+function getColorClass(hasReading: boolean): string {
+  return hasReading
+    ? "bg-primary hover:bg-primary/80"
+    : "bg-muted hover:bg-muted/80";
 }
 
 export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
@@ -73,7 +53,7 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
     <div className="w-full overflow-x-auto">
       <div className="inline-block min-w-full">
         {/* Month labels */}
-        <div className="flex gap-[3px] mb-2 ml-8">
+        <div className="hidden sm:flex gap-[3px] mb-2 ml-8">
           {monthLabels.map((label, i) => (
             <div
               key={i}
@@ -85,9 +65,9 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
           ))}
         </div>
 
-        <div className="flex gap-[3px]">
-          {/* Day labels */}
-          <div className="flex flex-col gap-[3px] text-xs text-muted-foreground mr-2">
+        <div className="flex gap-[2px] sm:gap-[3px]">
+          {/* Day labels - hide on very small screens */}
+          <div className="hidden sm:flex flex-col gap-[3px] text-xs text-muted-foreground mr-2">
             <div className="h-[12px]"></div>
             <div className="h-[12px]">Mon</div>
             <div className="h-[12px]"></div>
@@ -99,29 +79,32 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
 
           {/* Heatmap grid */}
           <TooltipProvider delayDuration={0}>
-            <div className="flex gap-[3px]">
+            <div className="flex gap-[2px] sm:gap-[3px]">
               {weeks.map((week, weekIndex) => (
-                <div key={weekIndex} className="flex flex-col gap-[3px]">
+                <div
+                  key={weekIndex}
+                  className="flex flex-col gap-[2px] sm:gap-[3px]"
+                >
                   {week.map((day, dayIndex) => {
                     if (!day.date) {
                       return (
                         <div
                           key={dayIndex}
-                          className="w-[12px] h-[12px] rounded-sm"
+                          className="w-[10px] h-[10px] sm:w-[12px] sm:h-[12px] rounded-sm"
                         />
                       );
                     }
 
-                    const intensity = getIntensityLevel(day.count);
-                    const colorClass = getColorClass(intensity);
+                    const hasReading = day.count > 0;
+                    const colorClass = getColorClass(hasReading);
 
                     return (
                       <Tooltip key={day.date}>
                         <TooltipTrigger asChild>
                           <button
-                            className={`w-[12px] h-[12px] rounded-sm transition-colors ${colorClass}`}
-                            aria-label={`${day.count} reading${
-                              day.count !== 1 ? "s" : ""
+                            className={`w-[10px] h-[10px] sm:w-[12px] sm:h-[12px] rounded-sm transition-colors ${colorClass}`}
+                            aria-label={`${
+                              hasReading ? "Read" : "No reading"
                             } on ${format(new Date(day.date), "MMM d, yyyy")}`}
                           />
                         </TooltipTrigger>
@@ -130,17 +113,13 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
                             <p className="font-semibold">
                               {format(new Date(day.date), "EEEE, MMMM d, yyyy")}
                             </p>
-                            {day.count === 0 ? (
-                              <p className="text-xs text-muted-foreground">
-                                No readings
-                              </p>
-                            ) : (
+                            {hasReading ? (
                               <div className="space-y-1">
                                 <p className="text-xs text-muted-foreground">
                                   {day.count} reading
                                   {day.count !== 1 ? "s" : ""}
                                 </p>
-                                {day.readings.map((reading, idx) => (
+                                {day.readings.map((reading) => (
                                   <p key={reading.id} className="text-xs">
                                     {formatScriptureReferences(
                                       reading.scripture
@@ -148,6 +127,10 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
                                   </p>
                                 ))}
                               </div>
+                            ) : (
+                              <p className="text-xs text-muted-foreground">
+                                No reading
+                              </p>
                             )}
                           </div>
                         </TooltipContent>
@@ -160,20 +143,18 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
           </TooltipProvider>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground">
-          <span>Less</span>
-          <div className="flex gap-1">
-            {[0, 1, 2, 3, 4].map((level) => (
-              <div
-                key={level}
-                className={`w-[12px] h-[12px] rounded-sm ${getColorClass(
-                  level
-                )}`}
-              />
-            ))}
+        {/* Legend - Binary version */}
+        <div className="flex items-center gap-2 mt-3 sm:mt-4 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <div className="w-[10px] h-[10px] sm:w-[12px] sm:h-[12px] rounded-sm bg-muted" />
+              <span>No reading</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-[10px] h-[10px] sm:w-[12px] sm:h-[12px] rounded-sm bg-primary" />
+              <span>Read</span>
+            </div>
           </div>
-          <span>More</span>
         </div>
       </div>
     </div>

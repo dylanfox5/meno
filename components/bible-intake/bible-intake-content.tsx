@@ -5,6 +5,7 @@ import { BookOpen, Trash2 } from "lucide-react";
 import { useBibleReading } from "@/lib/bible-reading-context";
 import { formatScriptureReferences } from "@/lib/scripture-utils";
 import { LogReadingDialog } from "@/components/bible-intake/log-reading-dialog";
+import { WeekView } from "@/components/bible-intake/week-view";
 import { ReadingHeatmap } from "@/components/bible-intake/reading-heatmap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -51,60 +52,83 @@ export function BibleIntakeContent() {
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
             Bible Intake
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Track your daily Bible reading and build a consistent habit
           </p>
         </div>
-        <LogReadingDialog />
+        <div className="sm:mt-0">
+          <LogReadingDialog />
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-semibold text-foreground">
-              {totalReadings}
-            </div>
-            <p className="text-xs text-muted-foreground">Total Readings</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-semibold text-foreground">
+          <CardContent className="p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {uniqueDays}
             </div>
-            <p className="text-xs text-muted-foreground">Days Read</p>
+            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+              Days Read
+            </p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-semibold text-foreground">
+          <CardContent className="p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {currentStreak}
             </div>
-            <p className="text-xs text-muted-foreground">Day Streak</p>
+            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+              Day Streak
+            </p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-semibold text-foreground">
+          <CardContent className="p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {last30Days}
             </div>
-            <p className="text-xs text-muted-foreground">Last 30 Days</p>
+            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+              Last 30 Days
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-3 sm:p-4">
+            <div className="text-xl sm:text-2xl font-semibold text-foreground">
+              {totalReadings}
+            </div>
+            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+              Total Readings
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Heatmap - Full Width */}
+      {/* This Week's Reading - NEW WEEK VIEW */}
       <Card>
         <CardHeader>
-          <CardTitle>Reading Activity</CardTitle>
+          <CardTitle>This Week</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Your Bible reading over the last 365 days
+            Your Bible reading for the current week
+          </p>
+        </CardHeader>
+        <CardContent>
+          <WeekView readings={readings} />
+        </CardContent>
+      </Card>
+
+      {/* Yearly Consistency Heatmap */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Reading Consistency</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Your daily Bible reading habit over the past year
           </p>
         </CardHeader>
         <CardContent>
