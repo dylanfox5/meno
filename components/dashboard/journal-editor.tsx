@@ -101,7 +101,7 @@ export function JournalEditor({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="mx-4 sm:mx-0 sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0"
+        className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0"
         showCloseButton={false}
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
