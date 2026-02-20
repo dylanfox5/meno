@@ -9,6 +9,7 @@ import { JournalProvider } from "@/lib/journal-context";
 import { createClient } from "@/lib/supabase/server";
 import { Toaster } from "@/components/ui/sonner";
 import { BibleReadingProvider } from "@/lib/bible-reading-context";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -17,13 +18,24 @@ export const metadata: Metadata = {
   title: "Meno",
   description:
     "A reflective space for journaling, prayer, and growing in faith",
-  generator: "v0.app",
   icons: {
     icon: [
       {
         url: "/icon.png",
       },
     ],
+  },
+  openGraph: {
+    title: "Meno",
+    description:
+      "A reflective space for journaling, prayer, and growing in faith",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Meno",
+    description:
+      "A reflective space for journaling, prayer, and growing in faith",
   },
 };
 
@@ -40,21 +52,23 @@ export default async function RootLayout({
   const showSidebar = !!user;
 
   return (
-    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
+    <html lang="en" className={`${inter.variable} ${lora.variable}`} suppressHydrationWarning>
       <body className={`font-sans antialiased`}>
-        <JournalProvider>
-          <BibleReadingProvider>
-            {showSidebar ? (
-              <SidebarProvider>
-                <AppSidebarWrapper />
-                <SidebarInset>{children}</SidebarInset>
-              </SidebarProvider>
-            ) : (
-              children
-            )}
-          </BibleReadingProvider>
-        </JournalProvider>
-        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {showSidebar ? (
+            <JournalProvider>
+              <BibleReadingProvider>
+                <SidebarProvider>
+                  <AppSidebarWrapper />
+                  <SidebarInset>{children}</SidebarInset>
+                </SidebarProvider>
+              </BibleReadingProvider>
+            </JournalProvider>
+          ) : (
+            children
+          )}
+          <Toaster />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
