@@ -20,6 +20,10 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useBibleReading } from "@/lib/bible-reading-context";
 
+function localDateString(date: Date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 interface LogReadingDialogProps {
   trigger?: React.ReactNode;
 }
@@ -28,10 +32,7 @@ export function LogReadingDialog({ trigger }: LogReadingDialogProps) {
   const { saveReading } = useBibleReading();
   const [open, setOpen] = useState(false);
   const [scripture, setScripture] = useState<ScriptureReference[]>([]);
-  const [readingDate, setReadingDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  });
+  const [readingDate, setReadingDate] = useState(() => localDateString());
   const [quickInput, setQuickInput] = useState("");
   const [parseError, setParseError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -72,7 +73,7 @@ export function LogReadingDialog({ trigger }: LogReadingDialogProps) {
       // Reset form and close dialog
       setScripture([]);
       setQuickInput("");
-      setReadingDate(new Date().toISOString().split("T")[0]);
+      setReadingDate(localDateString());
       setOpen(false);
     } finally {
       setIsSaving(false);
@@ -105,7 +106,7 @@ export function LogReadingDialog({ trigger }: LogReadingDialogProps) {
               type="date"
               value={readingDate}
               onChange={(e) => setReadingDate(e.target.value)}
-              max={new Date().toISOString().split("T")[0]}
+              max={localDateString()}
             />
           </div>
 

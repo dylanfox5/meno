@@ -61,7 +61,7 @@ function generateHeatmapData(readings: BibleReading[]): ReadingHeatmapDay[] {
   for (let i = 364; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
     const dayReadings = readingsByDate.get(dateString) || [];
 
