@@ -69,6 +69,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
       : null;
 
   return (
+    <>
     <Card
       className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 border-l-4 ${
         isScripture ? "border-l-primary" : "border-l-muted-foreground/40"
@@ -178,5 +179,6 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+    </>
   );
 }
