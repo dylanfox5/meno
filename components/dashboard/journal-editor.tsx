@@ -147,6 +147,11 @@ export function JournalEditor({
               </SelectContent>
             </Select>
           </div>
+          <p className="text-xs text-muted-foreground -mt-2">
+            {type === "Scripture"
+              ? "Reflections on a specific passage or reading"
+              : "General life observations, prayers, or thoughts"}
+          </p>
 
           <div className="px-3 py-3 rounded-lg bg-muted/50 border border-border">
             <ScriptureInput value={scripture} onChange={setScripture} />

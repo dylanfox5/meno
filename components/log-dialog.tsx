@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Calendar, Plus, X, PenLine } from "lucide-react";
+import { BookOpen, Calendar, Plus, X, PenLine, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,7 +60,7 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
       setQuickInput("");
       setParseError(null);
     } else {
-      setParseError("Could not parse. Try: Book Chapter:Verse");
+      setParseError('Couldn\'t parse that. Try: "John 3:16", "Romans 8", or "Psalm 23:1-6"');
     }
   };
 
@@ -186,7 +186,14 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
                   disabled={scripture.length === 0 || isSaving}
                   className="flex-1"
                 >
-                  {isSaving ? "Saving..." : "Save Reading"}
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Reading"
+                  )}
                 </Button>
               </div>
             </div>

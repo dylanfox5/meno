@@ -65,7 +65,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
       setIsAdding(false);
     } else {
       setParseError(
-        "Could not parse reference. Try format: Book Chapter:Verse"
+        'Couldn\'t parse that. Try: "John 3:16", "Romans 8", or "Psalm 23:1-6"'
       );
     }
   };
