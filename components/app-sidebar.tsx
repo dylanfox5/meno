@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   BookOpen,
@@ -10,10 +11,10 @@ import {
   LogOut,
   Settings,
   User,
-  Plus,
+  BookMarked,
 } from "lucide-react";
-import { useJournal } from "@/lib/journal-context";
 import { signout } from "@/app/auth/actions";
+import { LogDialog } from "@/components/log-dialog";
 
 import {
   Sidebar,
@@ -66,7 +67,7 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const { openEditor } = useJournal();
+  const [logOpen, setLogOpen] = useState(false);
 
   const initials =
     displayName
@@ -100,12 +101,12 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => openEditor()}
-                  tooltip="New Entry"
+                  onClick={() => setLogOpen(true)}
+                  tooltip="Log"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                 >
-                  <Plus className="size-4" />
-                  <span>New Entry</span>
+                  <BookMarked className="size-4" />
+                  <span>Log</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               {navItems.map((item) => {
@@ -187,6 +188,7 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
       </SidebarFooter>
 
       <SidebarRail />
+      <LogDialog open={logOpen} onOpenChange={setLogOpen} />
     </Sidebar>
   );
 }

@@ -27,6 +27,7 @@ import { ScriptureInput } from "../scripture/scripture-input";
 
 interface JournalEditorProps {
   entry?: JournalEntry | null;
+  initialScripture?: ScriptureReference[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (entry: JournalEntryDraft, id?: string) => void;
@@ -34,6 +35,7 @@ interface JournalEditorProps {
 
 export function JournalEditor({
   entry,
+  initialScripture = [],
   open,
   onOpenChange,
   onSave,
@@ -52,13 +54,13 @@ export function JournalEditor({
     if (open) {
       setTitle(entry?.title || "");
       setContent(entry?.content || "");
-      setScripture(entry?.scripture || []);
-      setType(entry?.type || "Life");
+      setScripture(entry?.scripture || initialScripture);
+      setType(entry?.type || (initialScripture.length > 0 ? "Scripture" : "Life"));
       setTags(entry?.tags || []);
       setNewTag("");
       setCurrentPrompt(null);
     }
-  }, [entry, open]);
+  }, [entry, open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = () => {
     if (!content.trim()) return;
