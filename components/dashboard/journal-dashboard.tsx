@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { JournalCard } from "./journal-card";
 import { EmptyState } from "./empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useJournal } from "@/lib/journal-context";
 import { formatScriptureReferences } from "@/lib/scripture-utils";
 
@@ -32,8 +33,29 @@ export function JournalDashboard() {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading your journal...</p>
+        {/* Header skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-40" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-9 w-28" />
+        </div>
+        {/* Search bar skeleton */}
+        <Skeleton className="h-10 w-full mb-6" />
+        {/* Cards skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-4 w-12" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
+          ))}
         </div>
       </div>
     );

@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { ArrowRight, BookOpen, Calendar, Flame, PenLine } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useJournal } from "@/lib/journal-context";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { formatScriptureReferences } from "@/lib/scripture-utils";
@@ -112,8 +113,47 @@ export function DashboardContent() {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading your entries...</p>
+        {/* Welcome section skeleton */}
+        <div className="rounded-xl p-6 mb-6">
+          <Skeleton className="h-4 w-40 mb-2" />
+          <Skeleton className="h-8 w-56 mb-2" />
+          <Skeleton className="h-4 w-80" />
+          <div className="mt-5 pt-5 border-t border-border">
+            <Skeleton className="h-6 w-full max-w-lg mb-2" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        </div>
+        {/* Stats skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="border-border">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-8 h-8 rounded-lg" />
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-6 w-8" />
+                    <Skeleton className="h-3 w-16" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        {/* Recent entries skeleton */}
+        <div className="rounded-xl p-6">
+          <Skeleton className="h-6 w-36 mb-4" />
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 p-3">
+                <Skeleton className="w-10 h-10 rounded-lg shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-4 w-48" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+                <Skeleton className="h-3 w-10 shrink-0" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
