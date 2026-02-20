@@ -304,6 +304,9 @@ export function formatScriptureReferences(refs: ScriptureReference[]): string {
   return refs.map(formatScriptureReference).join(", ");
 }
 
+// Sorted once at module load time (longest first) for greedy book name matching
+const SORTED_BIBLE_BOOKS = [...BIBLE_BOOKS].sort((a, b) => b.length - a.length);
+
 /**
  * Parse a scripture reference string into structured data
  * Supports:
@@ -324,11 +327,8 @@ export function parseScriptureReference(
   let bookName: string | null = null;
   let refPart = "";
 
-  // Sort books by length (longest first) to match longer names first
-  const sortedBooks = [...BIBLE_BOOKS].sort((a, b) => b.length - a.length);
-
   // Try to match full book names first
-  for (const book of sortedBooks) {
+  for (const book of SORTED_BIBLE_BOOKS) {
     const bookLower = book.toLowerCase();
     const inputLower = trimmed.toLowerCase();
 
