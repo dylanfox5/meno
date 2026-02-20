@@ -36,7 +36,7 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
   let currentWeek: ReadingHeatmapDay[] = [];
 
   // Pad beginning to start on Sunday
-  const firstDayOfWeek = getDay(new Date(data[0].date));
+  const firstDayOfWeek = getDay(new Date(`${data[0].date}T00:00:00`));
   for (let i = 0; i < firstDayOfWeek; i++) {
     currentWeek.push({
       date: "",
@@ -49,7 +49,7 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
     currentWeek.push(day);
 
     // If Sunday (or last day), start new week
-    if (getDay(new Date(day.date)) === 6 || index === data.length - 1) {
+    if (getDay(new Date(`${day.date}T00:00:00`)) === 6 || index === data.length - 1) {
       weeks.push([...currentWeek]);
       currentWeek = [];
     }
@@ -113,13 +113,13 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
                             className={`w-3 h-3 sm:w-[12px] sm:h-[12px] rounded-sm transition-colors ${colorClass}`}
                             aria-label={`${
                               hasReading ? "Read" : "No reading"
-                            } on ${format(new Date(day.date), "MMM d, yyyy")}`}
+                            } on ${format(new Date(`${day.date}T00:00:00`), "MMM d, yyyy")}`}
                           />
                         </TooltipTrigger>
                         <TooltipContent side="top" className="max-w-xs">
                           <div className="space-y-1">
                             <p className="font-semibold">
-                              {format(new Date(day.date), "EEEE, MMMM d, yyyy")}
+                              {format(new Date(`${day.date}T00:00:00`), "EEEE, MMMM d, yyyy")}
                             </p>
                             {hasReading ? (
                               <div className="space-y-1">
@@ -176,8 +176,8 @@ function getMonthLabels(data: ReadingHeatmapDay[]) {
   let weekCount = 0;
 
   data.forEach((day, index) => {
-    const month = format(new Date(day.date), "MMM");
-    const dayOfWeek = getDay(new Date(day.date));
+    const month = format(new Date(`${day.date}T00:00:00`), "MMM");
+    const dayOfWeek = getDay(new Date(`${day.date}T00:00:00`));
 
     if (dayOfWeek === 0) weekCount++; // Count weeks on Sundays
 
