@@ -97,7 +97,7 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="mx-4 sm:mx-0 sm:max-w-md">
         {step === 1 ? (
           <>
             <DialogHeader>

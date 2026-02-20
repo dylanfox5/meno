@@ -97,7 +97,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -116,7 +116,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="px-6">
+      <CardContent className="px-4 sm:px-6">
         {scriptureDisplay && (
           <div className="flex items-center gap-1.5 text-sm text-primary mb-2">
             <BookOpen className="w-3.5 h-3.5" />
