@@ -38,7 +38,7 @@ export default async function LandingPage() {
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-32 sm:pb-24">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
             A quiet space for <span className="text-primary">reflection</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
@@ -82,7 +82,7 @@ export default async function LandingPage() {
                   chaos...
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-primary">
+              <div className="flex items-center gap-2 text-sm text-scripture">
                 <BookOpen className="w-4 h-4" />
                 <span>Psalm 46:10</span>
               </div>
@@ -202,12 +202,12 @@ export default async function LandingPage() {
       <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="max-w-3xl mx-auto text-center">
           <blockquote className="space-y-4">
-            <p className="text-2xl sm:text-3xl text-foreground italic leading-relaxed">
+            <p className="font-serif text-2xl sm:text-3xl text-foreground italic leading-relaxed">
               "Abide in me, and I in you. As the branch cannot bear fruit by
               itself, unless it abides in the vine, neither can you, unless you
               abide in me."
             </p>
-            <footer className="text-primary font-medium">— John 15:4</footer>
+            <footer className="text-scripture font-medium">— John 15:4</footer>
           </blockquote>
         </div>
       </section>

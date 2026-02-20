@@ -109,7 +109,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
             variant="secondary"
             className="gap-1.5 pr-1 py-1 text-sm font-normal"
           >
-            <BookOpen className="w-3.5 h-3.5 text-primary" />
+            <BookOpen className="w-3.5 h-3.5 text-scripture" />
             {formatScriptureReference(ref)}
             <button
               type="button"

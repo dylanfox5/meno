@@ -112,7 +112,7 @@ export function BibleIntakeContent() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
+          <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2">
             Bible Intake
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground">
@@ -223,7 +223,7 @@ export function BibleIntakeContent() {
                         {format(new Date(reading.reading_date), "MMM d, yyyy")}
                       </Badge>
                     </div>
-                    <p className="text-sm text-foreground truncate">
+                    <p className="text-sm text-scripture font-medium truncate">
                       {formatScriptureReferences(reading.scripture)}
                     </p>
                   </div>
