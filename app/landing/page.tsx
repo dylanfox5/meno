@@ -58,33 +58,60 @@ export default async function LandingPage() {
           </div>
         </div>
 
-        {/* Visual Preview */}
-        <div className="max-w-5xl mx-auto mt-16 sm:mt-24">
-          <div className="rounded-xl border border-border bg-card shadow-2xl overflow-hidden">
-            <div className="bg-muted/30 border-b border-border px-4 py-3 flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-            </div>
-            <div className="p-8 sm:p-12 space-y-6">
-              <div>
-                <div className="text-sm text-muted-foreground mb-2">
-                  Today's reflection
+        {/* Journal Page Preview */}
+        <div className="max-w-2xl mx-auto mt-16 sm:mt-24">
+          {/* Outer shadow/depth layer */}
+          <div className="relative">
+            {/* Stacked page effect */}
+            <div className="absolute inset-0 translate-x-2 translate-y-2 rounded-xl bg-parchment-border/60 border border-parchment-border" />
+            <div className="absolute inset-0 translate-x-1 translate-y-1 rounded-xl bg-parchment border border-parchment-border" />
+
+            {/* Main journal card */}
+            <div
+              className="relative rounded-xl border border-parchment-border bg-parchment shadow-xl overflow-hidden"
+              style={{
+                backgroundImage: `repeating-linear-gradient(
+                  transparent,
+                  transparent calc(2rem - 1px),
+                  oklch(0.88 0.02 80 / 0.5) calc(2rem - 1px),
+                  oklch(0.88 0.02 80 / 0.5) 2rem
+                )`,
+                backgroundSize: "100% 2rem",
+                backgroundPositionY: "5.5rem",
+              }}
+            >
+              {/* Journal page header */}
+              <div className="px-8 sm:px-12 pt-8 pb-4 border-b border-parchment-border/60 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground tracking-widest uppercase">February 19, 2026</p>
+                  <h3 className="font-serif text-2xl font-semibold text-foreground mt-1">Morning gratitude</h3>
                 </div>
-                <div className="text-2xl font-semibold mb-4">
-                  Morning gratitude
-                </div>
-                <div className="text-muted-foreground leading-relaxed">
-                  Lord, this morning I'm wrestling with anxiety about the week
-                  ahead. But You remind me in Psalm 46:10 to "Be still, and know
-                  that I am God." In the quiet before the day begins, I feel
-                  Your peace most clearly. Help me carry this stillness into the
-                  chaos...
+                <div className="flex items-center gap-1.5 text-xs text-scripture font-medium bg-scripture/10 px-3 py-1.5 rounded-full border border-scripture/20">
+                  <BookOpen className="w-3 h-3" />
+                  <span>Psalm 46:10</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-scripture">
-                <BookOpen className="w-4 h-4" />
-                <span>Psalm 46:10</span>
+
+              {/* Journal page body */}
+              <div className="px-8 sm:px-12 py-6 space-y-0" style={{ lineHeight: "2rem" }}>
+                <p className="font-serif text-base text-foreground/90 italic leading-8">
+                  Lord, this morning I'm wrestling with anxiety about the week ahead. But You remind me to{" "}
+                  <span className="not-italic font-medium text-foreground">"be still, and know that I am God."</span>
+                </p>
+                <p className="font-serif text-base text-foreground/90 italic leading-8">
+                  In the quiet before the day begins, I feel Your peace most clearly — like still water. Help me carry this stillness into the chaos. Teach me to return to You throughout the day, not just in the morning.
+                </p>
+                <p className="font-serif text-base text-foreground/90 italic leading-8 text-foreground/50">
+                  Continue writing...
+                </p>
+              </div>
+
+              {/* Journal page footer */}
+              <div className="px-8 sm:px-12 py-4 border-t border-parchment-border/60 flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Tags:</span>
+                <span className="text-xs bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-full">gratitude</span>
+                <span className="text-xs bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-full">peace</span>
+                <span className="text-xs bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-full">anxiety</span>
               </div>
             </div>
           </div>
