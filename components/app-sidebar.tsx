@@ -9,7 +9,6 @@ import {
   Book,
   ChevronUp,
   LogOut,
-  Settings,
   User,
   BookMarked,
 } from "lucide-react";
@@ -165,12 +164,6 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
                   <Link href="/profile" className="cursor-pointer">
                     <User className="mr-2 size-4" />
                     Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings" className="cursor-pointer">
-                    <Settings className="mr-2 size-4" />
-                    Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
