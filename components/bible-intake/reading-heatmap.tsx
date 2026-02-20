@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { format, getDay } from "date-fns";
 import type { ReadingHeatmapDay } from "@/lib/types";
 import { formatScriptureReferences } from "@/lib/scripture-utils";
@@ -23,6 +23,14 @@ function getColorClass(hasReading: boolean): string {
 }
 
 export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, [data]);
+
   // Group data into weeks (starting on Sunday)
   const weeks: ReadingHeatmapDay[][] = [];
   let currentWeek: ReadingHeatmapDay[] = [];
@@ -50,7 +58,7 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
   const monthLabels = getMonthLabels(data);
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div ref={scrollRef} className="w-full overflow-x-auto">
       <div className="inline-block min-w-full">
         {/* Month labels */}
         <div className="hidden sm:flex gap-[3px] mb-2 ml-8">
