@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { BookOpen, Trash2 } from "lucide-react";
+import { BookOpen, Trash2, CalendarDays, Flame, BarChart2 } from "lucide-react";
 import { useBibleReading } from "@/lib/bible-reading-context";
 import { formatScriptureReferences } from "@/lib/scripture-utils";
 import { LogReadingDialog } from "@/components/bible-intake/log-reading-dialog";
@@ -126,46 +126,26 @@ export function BibleIntakeContent() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="text-xl sm:text-2xl font-semibold text-foreground">
-              {uniqueDays}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Days Read
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="text-xl sm:text-2xl font-semibold text-foreground">
-              {currentStreak}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Day Streak
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="text-xl sm:text-2xl font-semibold text-foreground">
-              {last30Days}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Last 30 Days
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="text-xl sm:text-2xl font-semibold text-foreground">
-              {totalReadings}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Total Readings
-            </p>
-          </CardContent>
-        </Card>
+        {[
+          { label: "Days Read", value: uniqueDays, icon: CalendarDays, color: "text-primary", bgColor: "bg-primary/10" },
+          { label: "Day Streak", value: currentStreak, icon: Flame, color: "text-chart-3", bgColor: "bg-chart-3/10" },
+          { label: "Last 30 Days", value: last30Days, icon: BarChart2, color: "text-chart-2", bgColor: "bg-chart-2/10" },
+          { label: "Total Readings", value: totalReadings, icon: BookOpen, color: "text-chart-4", bgColor: "bg-chart-4/10" },
+        ].map((stat) => (
+          <Card key={stat.label}>
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                  <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                </div>
+                <div>
+                  <p className="text-xl sm:text-2xl font-semibold text-foreground">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground">{stat.label}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* This Week's Reading - NEW WEEK VIEW */}
