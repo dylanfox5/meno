@@ -10,8 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Toaster } from "@/components/ui/sonner";
 import { BibleReadingProvider } from "@/lib/bible-reading-context";
 
-const _lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
-const _inter = Inter({ subsets: ["latin"] });
+const lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Meno",
@@ -40,7 +40,7 @@ export default async function RootLayout({
   const showSidebar = !!user;
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
       <body className={`font-sans antialiased`}>
         <JournalProvider>
           <BibleReadingProvider>

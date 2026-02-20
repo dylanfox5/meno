@@ -28,6 +28,10 @@
   --chart-3: oklch(0.55 0.06 50);
   --chart-4: oklch(0.65 0.10 120);
   --chart-5: oklch(0.50 0.08 200);
+  --scripture: oklch(0.62 0.14 68);
+  --scripture-foreground: oklch(0.98 0.005 80);
+  --parchment: oklch(0.97 0.025 85);
+  --parchment-border: oklch(0.90 0.03 75);
   --radius: 0.75rem;
   --sidebar: oklch(0.98 0.005 80);
   --sidebar-foreground: oklch(0.25 0.02 150);
@@ -64,6 +68,10 @@
   --chart-3: oklch(0.50 0.05 50);
   --chart-4: oklch(0.60 0.08 120);
   --chart-5: oklch(0.55 0.06 200);
+  --scripture: oklch(0.72 0.14 68);
+  --scripture-foreground: oklch(0.15 0.02 80);
+  --parchment: oklch(0.22 0.015 85);
+  --parchment-border: oklch(0.30 0.02 75);
   --sidebar: oklch(0.20 0.01 150);
   --sidebar-foreground: oklch(0.92 0.005 80);
   --sidebar-primary: oklch(0.65 0.12 150);
@@ -75,8 +83,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
-  --font-serif: 'Lora', 'Georgia', serif;
+  --font-sans: var(--font-inter), 'Inter Fallback', system-ui, sans-serif;
+  --font-serif: var(--font-lora), 'Georgia', serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -102,6 +110,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-scripture: var(--scripture);
+  --color-scripture-foreground: var(--scripture-foreground);
+  --color-parchment: var(--parchment);
+  --color-parchment-border: var(--parchment-border);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

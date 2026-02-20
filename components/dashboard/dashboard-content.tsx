@@ -164,13 +164,13 @@ export function DashboardContent() {
     return (
       <div className="p-4 sm:p-6 max-w-4xl mx-auto">
         {/* Welcome Section */}
-        <div className="rounded-xl p-6 mb-6">
+        <div className="rounded-xl p-6 mb-6 bg-parchment border border-parchment-border">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground mb-1">
                 {format(today, "EEEE, MMMM d, yyyy")}
               </p>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
+              <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
                 Good {getTimeOfDay()}, friend
               </h1>
               <p className="text-muted-foreground max-w-xl">
@@ -180,11 +180,11 @@ export function DashboardContent() {
             </div>
           </div>
 
-          <div className="mt-5 pt-5 border-t border-border">
-            <p className=" text-lg text-foreground italic leading-relaxed">
+          <div className="mt-5 pt-5 border-t border-parchment-border">
+            <p className="font-serif text-lg text-foreground italic leading-relaxed">
               {`"${verse.text}"`}
             </p>
-            <p className="text-sm text-primary font-medium mt-2">
+            <p className="text-sm text-scripture font-medium mt-2">
               — {verse.reference}
             </p>
           </div>
@@ -199,13 +199,13 @@ export function DashboardContent() {
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       {/* Welcome Section */}
-      <div className="rounded-xl p-6 mb-6">
+      <div className="rounded-xl p-6 mb-6 bg-parchment border border-parchment-border">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm text-muted-foreground mb-1">
               {format(today, "EEEE, MMMM d, yyyy")}
             </p>
-            <h1 className=" text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-foreground mb-2 text-balance">
               Good {getTimeOfDay()}, friend
             </h1>
             <p className="text-muted-foreground max-w-xl">
@@ -215,11 +215,11 @@ export function DashboardContent() {
           </div>
         </div>
 
-        <div className="mt-5 pt-5 border-t border-border">
-          <p className=" text-lg text-foreground italic leading-relaxed">
+        <div className="mt-5 pt-5 border-t border-parchment-border">
+          <p className="font-serif text-lg text-foreground italic leading-relaxed">
             {`"${verse.text}"`}
           </p>
-          <p className="text-sm text-primary font-medium mt-2">
+          <p className="text-sm text-scripture font-medium mt-2">
             — {verse.reference}
           </p>
         </div>
@@ -292,11 +292,11 @@ export function DashboardContent() {
                     <PenLine className="w-4 h-4 text-primary" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                    <h3 className="font-serif font-medium text-foreground group-hover:text-primary transition-colors truncate">
                       {entry.title}
                     </h3>
                     {scriptureDisplay && (
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="text-xs text-scripture truncate">
                         {scriptureDisplay}
                       </p>
                     )}

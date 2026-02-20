@@ -88,7 +88,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
                 )}
               </Badge>
             </div>
-            <h3 className="text-lg font-medium text-foreground truncate">
+            <h3 className="font-serif text-lg font-medium text-foreground truncate">
               {entry.title || "Untitled Entry"}
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5">
@@ -118,7 +118,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
       </CardHeader>
       <CardContent className="px-4 sm:px-6">
         {scriptureDisplay && (
-          <div className="flex items-center gap-1.5 text-sm text-primary mb-2">
+          <div className="flex items-center gap-1.5 text-sm text-scripture mb-2">
             <BookOpen className="w-3.5 h-3.5" />
             <span className="font-medium">{scriptureDisplay}</span>
           </div>
