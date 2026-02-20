@@ -61,11 +61,11 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
     <div ref={scrollRef} className="w-full overflow-x-auto">
       <div className="inline-block min-w-full">
         {/* Month labels */}
-        <div className="hidden sm:flex gap-[3px] mb-2 ml-8">
+        <div className="flex gap-[3px] mb-2 ml-5 sm:ml-8">
           {monthLabels.map((label, i) => (
             <div
               key={i}
-              className="text-xs text-muted-foreground"
+              className="text-[0.6rem] sm:text-xs text-muted-foreground"
               style={{ width: label.width }}
             >
               {label.name}
@@ -74,15 +74,15 @@ export function ReadingHeatmap({ data }: ReadingHeatmapProps) {
         </div>
 
         <div className="flex gap-[2px] sm:gap-[3px]">
-          {/* Day labels - hide on very small screens */}
-          <div className="hidden sm:flex flex-col gap-[3px] text-xs text-muted-foreground mr-2">
-            <div className="h-[12px]"></div>
-            <div className="h-[12px]">Mon</div>
-            <div className="h-[12px]"></div>
-            <div className="h-[12px]">Wed</div>
-            <div className="h-[12px]"></div>
-            <div className="h-[12px]">Fri</div>
-            <div className="h-[12px]"></div>
+          {/* Day labels - abbreviated on mobile */}
+          <div className="flex flex-col gap-[3px] text-[0.55rem] sm:text-xs text-muted-foreground mr-1 sm:mr-2">
+            <div className="h-[10px] sm:h-[12px]"></div>
+            <div className="h-[10px] sm:h-[12px]"><span className="sm:hidden">M</span><span className="hidden sm:inline">Mon</span></div>
+            <div className="h-[10px] sm:h-[12px]"></div>
+            <div className="h-[10px] sm:h-[12px]"><span className="sm:hidden">W</span><span className="hidden sm:inline">Wed</span></div>
+            <div className="h-[10px] sm:h-[12px]"></div>
+            <div className="h-[10px] sm:h-[12px]"><span className="sm:hidden">F</span><span className="hidden sm:inline">Fri</span></div>
+            <div className="h-[10px] sm:h-[12px]"></div>
           </div>
 
           {/* Heatmap grid */}

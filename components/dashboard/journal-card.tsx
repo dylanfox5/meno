@@ -58,10 +58,8 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
 
   return (
     <Card
-      className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 ${
-        isScripture
-          ? "border-l-4 border-l-primary"
-          : "border-l-4 border-l-emerald-500"
+      className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 border-l-4 ${
+        isScripture ? "border-l-primary" : "border-l-muted-foreground/40"
       }`}
       onClick={() => onSelect(entry)}
     >
@@ -74,7 +72,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
                 className={`text-xs ${
                   isScripture
                     ? "bg-primary/10 text-primary hover:bg-primary/20"
-                    : "bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20"
+                    : ""
                 }`}
               >
                 {isScripture ? (
