@@ -70,7 +70,7 @@ export function WeekView({ readings, weekStart }: WeekViewProps) {
                 </div>
 
                 {/* Day label - smaller on mobile */}
-                <span className="text-[0.65rem] sm:text-xs font-medium text-muted-foreground">
+                <span className="text-xs font-medium text-muted-foreground">
                   {day.dayName}
                 </span>
               </button>

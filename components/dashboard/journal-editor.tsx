@@ -101,7 +101,7 @@ export function JournalEditor({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0"
+        className="mx-4 sm:mx-0 sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0"
         showCloseButton={false}
       >
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
@@ -132,13 +132,13 @@ export function JournalEditor({
               placeholder="Entry Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="flex-1 text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
+              className="flex-1 min-w-0 text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
             />
             <Select
               value={type}
               onValueChange={(value: "Life" | "Scripture") => setType(value)}
             >
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-28 shrink-0">
                 <SelectValue placeholder="Entry type" />
               </SelectTrigger>
               <SelectContent>

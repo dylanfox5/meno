@@ -131,7 +131,7 @@ export function BibleIntakeContent() {
             <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {uniqueDays}
             </div>
-            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Days Read
             </p>
           </CardContent>
@@ -141,7 +141,7 @@ export function BibleIntakeContent() {
             <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {currentStreak}
             </div>
-            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Day Streak
             </p>
           </CardContent>
@@ -151,7 +151,7 @@ export function BibleIntakeContent() {
             <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {last30Days}
             </div>
-            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Last 30 Days
             </p>
           </CardContent>
@@ -161,7 +161,7 @@ export function BibleIntakeContent() {
             <div className="text-xl sm:text-2xl font-semibold text-foreground">
               {totalReadings}
             </div>
-            <p className="text-[0.65rem] sm:text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Total Readings
             </p>
           </CardContent>
@@ -223,7 +223,7 @@ export function BibleIntakeContent() {
                         {format(new Date(reading.reading_date), "MMM d, yyyy")}
                       </Badge>
                     </div>
-                    <p className="text-sm text-foreground">
+                    <p className="text-sm text-foreground truncate">
                       {formatScriptureReferences(reading.scripture)}
                     </p>
                   </div>
@@ -231,8 +231,8 @@ export function BibleIntakeContent() {
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                        size="icon"
+                        className="shrink-0 h-10 w-10 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

@@ -128,7 +128,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
             variant="outline"
             size="sm"
             onClick={() => setIsAdding(true)}
-            className="h-8 text-xs"
+            className="h-9 text-xs"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             Add Scripture
@@ -198,7 +198,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
                   {selectedBook || "Select book..."}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[300px] p-0" align="start">
+              <PopoverContent className="w-[min(300px,calc(100vw-2rem))] p-0" align="start">
                 <Command>
                   <CommandInput placeholder="Search books..." />
                   <CommandList>
