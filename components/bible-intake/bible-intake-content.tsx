@@ -220,7 +220,7 @@ export function BibleIntakeContent() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="secondary" className="text-xs">
-                        {format(new Date(reading.reading_date), "MMM d, yyyy")}
+                        {format(new Date(`${reading.reading_date}T00:00:00`), "MMM d, yyyy")}
                       </Badge>
                     </div>
                     <p className="text-sm text-scripture font-medium truncate">
