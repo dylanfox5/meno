@@ -24,11 +24,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     setIsLoading(true)
     setMessage(null)
 
-    console.log('Submitting form with:', formData.get('full_name'))
-
     const result = await updateProfile(formData)
-
-    console.log('Result:', result)
 
     if (result?.error) {
       setMessage({ type: 'error', text: result.error })
