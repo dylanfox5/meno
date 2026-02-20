@@ -9,7 +9,6 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { usePathname } from "next/navigation";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
 import type { ScriptureReference } from "@/lib/scripture-utils";
 import { JournalEditor } from "@/components/dashboard/journal-editor";
@@ -48,7 +47,6 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [editorOpen, setEditorOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [initialScripture, setInitialScripture] = useState<ScriptureReference[]>([]);
-  const pathname = usePathname();
   const hasLoadedRef = useRef(false);
   const previousAuthStateRef = useRef<boolean | null>(null);
 
@@ -93,7 +91,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     };
 
     checkAuthAndLoad();
-  }, [pathname, refreshEntries]);
+  }, [refreshEntries]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -149,7 +147,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
             content: draft.content || null,
             scripture: draft.scripture || null,
             type: draft.type || "Life",
-            tags: [],
+            tags: draft.tags || [],
           });
           if (result.error) {
             toast.error("Failed to create entry", {

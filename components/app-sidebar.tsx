@@ -42,7 +42,7 @@ import { LogoIcon } from "./ui/logo-icon";
 const navItems = [
   {
     title: "Dashboard",
-    url: "/",
+    url: "/dashboard",
     icon: LayoutDashboard,
   },
   {
