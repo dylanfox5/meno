@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import { BookOpen, MoreHorizontal, Trash2, Heart, Book } from "lucide-react";
 import type { JournalEntry } from "@/lib/types";
@@ -13,6 +14,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -39,6 +50,7 @@ function getTextPreview(html: string, maxLength: number = 150): string {
 }
 
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const preview = entry.content ? getTextPreview(entry.content) : "";
   const isScripture = entry.type === "Scripture";
   
@@ -57,6 +69,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
       : null;
 
   return (
+    <>
     <Card
       className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 border-l-4 ${
         isScripture ? "border-l-primary" : "border-l-muted-foreground/40"
@@ -92,7 +105,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
               {entry.title || "Untitled Entry"}
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {format(entry.created_at, "MMMM d, yyyy")}
+              {format(new Date(entry.created_at), "MMMM d, yyyy")}
             </p>
           </div>
           <DropdownMenu>
@@ -106,7 +119,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
                 className="text-destructive focus:text-destructive"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDelete(entry.id);
+                  setDeleteOpen(true);
                 }}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
@@ -146,5 +159,26 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
         )}
       </CardContent>
     </Card>
+
+    <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Entry?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete "{entry.title || "Untitled Entry"}"? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => onDelete(entry.id)}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

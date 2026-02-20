@@ -8,7 +8,16 @@ export default async function ProfilePage() {
   const profile = await getProfile();
 
   if (!profile) {
-    return null;
+    return (
+      <ProtectedRoute>
+        <ContentHeader title="Profile" />
+        <main className="flex-1 overflow-auto">
+          <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+            <p className="text-muted-foreground">Unable to load profile. Please try refreshing the page.</p>
+          </div>
+        </main>
+      </ProtectedRoute>
+    );
   }
 
   return (

@@ -247,7 +247,7 @@ export function DashboardContent() {
       </div>
 
       {/* Recent Entries */}
-      <div className="rounded-xl p-6">
+      <div className="rounded-xl p-6 bg-card border border-border shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className=" text-xl font-semibold text-foreground">
             Recent Entries
