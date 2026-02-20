@@ -35,58 +35,100 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-32 sm:pb-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
-            A quiet space for <span className="text-primary">reflection</span>
-          </h1>
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Journal your walk with Christ. Connect Scripture to your daily life.
-            Find joy in abiding.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" asChild>
-              <Link href="/signup" className="gap-2">
-                Start journaling for free
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              No credit card • No setup • Just write
-            </p>
-          </div>
-        </div>
+      {/* Hero Section — asymmetric split layout */}
+      <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-16 pb-16 sm:pt-24 sm:pb-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-        {/* Visual Preview */}
-        <div className="max-w-5xl mx-auto mt-16 sm:mt-24">
-          <div className="rounded-xl border border-border bg-card shadow-2xl overflow-hidden">
-            <div className="bg-muted/30 border-b border-border px-4 py-3 flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-            </div>
-            <div className="p-8 sm:p-12 space-y-6">
-              <div>
-                <div className="text-sm text-muted-foreground mb-2">
-                  Today's reflection
-                </div>
-                <div className="text-2xl font-semibold mb-4">
-                  Morning gratitude
-                </div>
-                <div className="text-muted-foreground leading-relaxed">
-                  Lord, this morning I'm wrestling with anxiety about the week
-                  ahead. But You remind me in Psalm 46:10 to "Be still, and know
-                  that I am God." In the quiet before the day begins, I feel
-                  Your peace most clearly. Help me carry this stillness into the
-                  chaos...
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-scripture">
-                <BookOpen className="w-4 h-4" />
-                <span>Psalm 46:10</span>
+            {/* Left: headline + CTA */}
+            <div className="lg:py-8">
+              <p className="text-sm font-medium text-scripture tracking-widest uppercase mb-4">
+                Faith · Reflection · Abiding
+              </p>
+              <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 leading-[1.05]">
+                A quiet space for{" "}
+                <span className="text-primary italic">reflection</span>
+              </h1>
+              <p className="text-lg text-muted-foreground mb-10 max-w-md leading-relaxed">
+                Journal your walk with Christ. Connect Scripture to your daily
+                life. Find joy in abiding.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 items-start">
+                <Button size="lg" asChild>
+                  <Link href="/signup" className="gap-2">
+                    Start journaling for free
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+                <p className="text-sm text-muted-foreground self-center">
+                  No credit card · No setup · Just write
+                </p>
               </div>
             </div>
+
+            {/* Right: floating rotated journal card */}
+            <div className="relative flex items-center justify-center lg:justify-end py-8 lg:py-0">
+              {/* Rotation wrapper */}
+              <div className="relative w-full max-w-sm lg:max-w-md" style={{ transform: "rotate(2deg)" }}>
+                {/* Shadow page behind */}
+                <div
+                  className="absolute inset-0 rounded-2xl bg-parchment-border/50 border border-parchment-border"
+                  style={{ transform: "rotate(-4deg) translate(-6px, 8px)" }}
+                />
+                {/* Main journal card */}
+                <div
+                  className="relative rounded-2xl border border-parchment-border bg-parchment shadow-2xl overflow-hidden"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(
+                      transparent,
+                      transparent calc(2rem - 1px),
+                      oklch(0.88 0.02 80 / 0.45) calc(2rem - 1px),
+                      oklch(0.88 0.02 80 / 0.45) 2rem
+                    )`,
+                    backgroundSize: "100% 2rem",
+                    backgroundPositionY: "5rem",
+                  }}
+                >
+                  {/* Card header */}
+                  <div className="px-7 pt-7 pb-4 border-b border-parchment-border/60">
+                    <p className="text-xs text-muted-foreground tracking-widest uppercase mb-1">
+                      February 19, 2026
+                    </p>
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-serif text-xl font-semibold text-foreground leading-snug">
+                        Morning gratitude
+                      </h3>
+                      <div className="flex items-center gap-1 text-xs text-scripture font-medium bg-scripture/10 px-2.5 py-1 rounded-full border border-scripture/20 shrink-0">
+                        <BookOpen className="w-3 h-3" />
+                        <span>Ps 46:10</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card body */}
+                  <div className="px-7 py-5" style={{ lineHeight: "2rem" }}>
+                    <p className="font-serif text-sm text-foreground/85 italic leading-8">
+                      Lord, this morning I'm wrestling with anxiety about the week ahead. But You remind me to{" "}
+                      <span className="not-italic font-semibold text-foreground">"be still, and know that I am God."</span>
+                    </p>
+                    <p className="font-serif text-sm text-foreground/85 italic leading-8">
+                      In the quiet before the day begins, I feel Your peace most clearly — like still water...
+                    </p>
+                    <p className="font-serif text-sm italic leading-8 text-foreground/35">
+                      Continue writing...
+                    </p>
+                  </div>
+
+                  {/* Card footer */}
+                  <div className="px-7 py-4 border-t border-parchment-border/60 flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Tags:</span>
+                    <span className="text-xs bg-muted/50 text-muted-foreground px-2 py-0.5 rounded-full">gratitude</span>
+                    <span className="text-xs bg-muted/50 text-muted-foreground px-2 py-0.5 rounded-full">peace</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
