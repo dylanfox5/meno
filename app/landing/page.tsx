@@ -42,14 +42,14 @@ export default async function LandingPage() {
             {/* Left: headline + CTA */}
             <div className="lg:py-8">
               <p className="text-sm font-medium text-scripture tracking-widest uppercase mb-4">
-                Faith · Reflection · Abiding
+                Scripture · Reflection · Prayer
               </p>
               <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 leading-[1.05]">
                 A quiet space for{" "}
                 <span className="text-primary italic">reflection</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-10 max-w-md leading-relaxed">
-                Journal your walk with Christ. Connect Scripture to your daily
+                Journal your walk with Christ. Let Scripture speak into your
                 life. Find joy in abiding.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-start">
@@ -140,8 +140,8 @@ export default async function LandingPage() {
               Everything you need, nothing you don't
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Simple, focused tools to help you build a consistent practice of
-              reflection and Scripture meditation.
+              Christians have always read, meditated, and prayed. Meno is just
+              a quiet place to do it.
             </p>
           </div>
 
@@ -236,8 +236,8 @@ export default async function LandingPage() {
             Begin reflecting today
           </h2>
           <p className="text-xl text-muted-foreground">
-            Join believers who are seeking deeper joy in Christ through daily
-            reflection and Scripture meditation.
+            Join believers who are seeking deeper joy in Christ through
+            Scripture, reflection, and prayer.
           </p>
           <Button size="lg" asChild>
             <Link href="/signup" className="gap-2">
