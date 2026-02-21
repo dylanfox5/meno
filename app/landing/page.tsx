@@ -250,10 +250,8 @@ export default async function LandingPage() {
                 you abide in me."
               </blockquote>
               {/* Decorative rule */}
-              <div className="mt-8 flex items-center gap-3">
-                <div className="h-px flex-1 bg-parchment-border/60" />
-                <span className="text-xs text-muted-foreground tracking-widest uppercase">Jesus Christ</span>
-                <div className="h-px flex-1 bg-parchment-border/60" />
+              <div className="mt-8">
+                <div className="h-px bg-parchment-border/60" />
               </div>
             </div>
           </div>
