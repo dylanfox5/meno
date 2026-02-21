@@ -42,20 +42,20 @@ export default async function LandingPage() {
             {/* Left: headline + CTA */}
             <div className="lg:py-8">
               <p className="text-sm font-medium text-scripture tracking-widest uppercase mb-4">
-                Faith · Reflection · Abiding
+                Scripture · Reflection · Prayer
               </p>
               <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 leading-[1.05]">
                 A quiet space for{" "}
                 <span className="text-primary italic">reflection</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-10 max-w-md leading-relaxed">
-                Journal your walk with Christ. Connect Scripture to your daily
+                Journal your walk with Christ. Let Scripture speak into your
                 life. Find joy in abiding.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-start">
                 <Button size="lg" asChild>
                   <Link href="/signup" className="gap-2">
-                    Start journaling for free
+                    Get started for free
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
@@ -137,11 +137,11 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Everything you need, nothing you don't
+              For those who abide
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Simple, focused tools to help you build a consistent practice of
-              reflection and Scripture meditation.
+              Christians have always read, meditated, and prayed. Meno is just
+              a quiet place to do it.
             </p>
           </div>
 
@@ -215,17 +215,46 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Scripture Quote */}
+      {/* Scripture Quote — parchment card */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        <div className="max-w-3xl mx-auto text-center">
-          <blockquote className="space-y-4">
-            <p className="font-serif text-2xl sm:text-3xl text-foreground italic leading-relaxed">
-              "Abide in me, and I in you. As the branch cannot bear fruit by
-              itself, unless it abides in the vine, neither can you, unless you
-              abide in me."
-            </p>
-            <footer className="text-scripture font-medium">— John 15:4</footer>
-          </blockquote>
+        <div className="max-w-3xl mx-auto">
+          <div className="relative">
+            {/* Shadow page behind */}
+            <div
+              className="absolute inset-0 rounded-2xl bg-parchment-border/50 border border-parchment-border"
+              style={{ transform: "rotate(1.5deg) translate(6px, 8px)" }}
+            />
+            {/* Main parchment card */}
+            <div
+              className="relative rounded-2xl border border-parchment-border bg-parchment shadow-xl overflow-hidden px-8 sm:px-14 py-12 sm:py-16"
+              style={{
+                backgroundImage: `repeating-linear-gradient(
+                  transparent,
+                  transparent calc(2rem - 1px),
+                  oklch(0.88 0.02 80 / 0.35) calc(2rem - 1px),
+                  oklch(0.88 0.02 80 / 0.35) 2rem
+                )`,
+                backgroundSize: "100% 2rem",
+                backgroundPositionY: "3rem",
+              }}
+            >
+              {/* Verse reference label */}
+              <div className="flex items-center gap-1.5 mb-6">
+                <BookOpen className="w-3.5 h-3.5 text-scripture" />
+                <span className="text-xs font-medium text-scripture tracking-widest uppercase">John 15:4</span>
+              </div>
+              {/* Quote */}
+              <blockquote className="font-serif text-xl sm:text-2xl lg:text-3xl text-foreground/90 italic leading-relaxed">
+                "Abide in me, and I in you. As the branch cannot bear fruit by
+                itself, unless it abides in the vine, neither can you, unless
+                you abide in me."
+              </blockquote>
+              {/* Decorative rule */}
+              <div className="mt-8">
+                <div className="h-px bg-parchment-border/60" />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -236,8 +265,8 @@ export default async function LandingPage() {
             Begin reflecting today
           </h2>
           <p className="text-xl text-muted-foreground">
-            Join believers who are seeking deeper joy in Christ through daily
-            reflection and Scripture meditation.
+            Join believers who are seeking deeper joy in Christ through
+            Scripture, reflection, and prayer.
           </p>
           <Button size="lg" asChild>
             <Link href="/signup" className="gap-2">
