@@ -7,7 +7,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 export default async function ProfilePage() {
   const profile = await getProfile();
 
-  if (!profile) {
+  if (!profile || 'error' in profile) {
     return (
       <ProtectedRoute>
         <ContentHeader title="Profile" />
