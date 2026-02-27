@@ -39,9 +39,9 @@ function getTextPreview(html: string, maxLength: number = 150): string {
     .replace(/<li[^>]*>/gi, "• ")
     .replace(/<\/li>/gi, " ");
 
-  const temp = document.createElement("div");
-  temp.innerHTML = processed;
-  const text = temp.textContent || temp.innerText || "";
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(processed, "text/html");
+  const text = doc.body.textContent || "";
   const cleaned = text.replace(/\s+/g, " ").trim();
 
   return cleaned.length > maxLength

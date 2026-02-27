@@ -47,6 +47,10 @@ export async function getProfile() {
     .eq('id', user.id)
     .single()
 
+  if (error && error.code !== 'PGRST116') {
+    return { error: error.message }
+  }
+
   return {
     email: user.email,
     full_name: profile?.full_name || '',
