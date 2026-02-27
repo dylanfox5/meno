@@ -2,17 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   BookOpen,
+  Book,
   ChevronUp,
   LogOut,
-  Settings,
   User,
-  Plus,
+  BookMarked,
 } from "lucide-react";
-import { useJournal } from "@/lib/journal-context";
 import { signout } from "@/app/auth/actions";
+import { LogDialog } from "@/components/log-dialog";
 
 import {
   Sidebar,
@@ -41,13 +42,18 @@ import { LogoIcon } from "./ui/logo-icon";
 const navItems = [
   {
     title: "Dashboard",
-    url: "/",
+    url: "/dashboard",
     icon: LayoutDashboard,
   },
   {
     title: "Journal",
     url: "/journal",
     icon: BookOpen,
+  },
+  {
+    title: "Bible Intake",
+    url: "/bible-intake",
+    icon: Book,
   },
 ];
 
@@ -60,7 +66,7 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const { openEditor } = useJournal();
+  const [logOpen, setLogOpen] = useState(false);
 
   const initials =
     displayName
@@ -94,12 +100,12 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => openEditor()}
-                  tooltip="New Entry"
+                  onClick={() => setLogOpen(true)}
+                  tooltip="Log"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                 >
-                  <Plus className="size-4" />
-                  <span>New Entry</span>
+                  <BookMarked className="size-4" />
+                  <span>Log</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               {navItems.map((item) => {
@@ -149,7 +155,7 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                className="w-(--radix-dropdown-menu-trigger-width) min-w-48 rounded-lg"
                 side={isCollapsed ? "right" : "top"}
                 align="end"
                 sideOffset={4}
@@ -158,12 +164,6 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
                   <Link href="/profile" className="cursor-pointer">
                     <User className="mr-2 size-4" />
                     Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings" className="cursor-pointer">
-                    <Settings className="mr-2 size-4" />
-                    Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -181,6 +181,7 @@ export function AppSidebar({ displayName, email }: AppSidebarProps) {
       </SidebarFooter>
 
       <SidebarRail />
+      <LogDialog open={logOpen} onOpenChange={setLogOpen} />
     </Sidebar>
   );
 }

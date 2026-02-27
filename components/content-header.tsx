@@ -1,13 +1,6 @@
 "use client";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
 
 interface ContentHeaderProps {
   title: string;
@@ -15,8 +8,11 @@ interface ContentHeaderProps {
 
 export function ContentHeader({ title }: ContentHeaderProps) {
   return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-border bg-background px-4">
+    <header className="flex h-14 shrink-0 items-center gap-2 border-border/40 bg-background/80 backdrop-blur-md px-4 sticky top-0 z-10">
       <SidebarTrigger className="-ml-1" />
+      {title && (
+        <h1 className="text-sm font-medium text-foreground">{title}</h1>
+      )}
     </header>
   );
 }

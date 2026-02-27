@@ -9,27 +9,21 @@ export async function updateProfile(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    console.error('No user found')
     return { error: 'Not authenticated' }
   }
 
   const fullName = formData.get('full_name') as string
 
-  console.log('Updating profile for user:', user.id, 'with name:', fullName)
-
   const { data, error } = await supabase
     .from('profiles')
-    .update({ 
+    .upsert({
+      id: user.id,
       full_name: fullName,
       updated_at: new Date().toISOString()
     })
-    .eq('id', user.id)
     .select()
 
-  console.log('Update result:', { data, error })
-
   if (error) {
-    console.error('Supabase error:', error)
     return { error: error.message }
   }
 
@@ -53,7 +47,9 @@ export async function getProfile() {
     .eq('id', user.id)
     .single()
 
-  console.log('Get profile result:', { profile, error, userId: user.id })
+  if (error && error.code !== 'PGRST116') {
+    return { error: error.message }
+  }
 
   return {
     email: user.email,

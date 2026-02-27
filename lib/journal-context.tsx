@@ -9,8 +9,8 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { usePathname } from "next/navigation";
 import type { JournalEntry, JournalEntryDraft } from "@/lib/types";
+import type { ScriptureReference } from "@/lib/scripture-utils";
 import { JournalEditor } from "@/components/dashboard/journal-editor";
 import {
   getJournalEntries,
@@ -24,7 +24,7 @@ import { createClient } from "@/lib/supabase/client";
 interface JournalContextType {
   entries: JournalEntry[];
   isLoading: boolean;
-  openEditor: (entry?: JournalEntry | null) => void;
+  openEditor: (entry?: JournalEntry | null, initialScripture?: ScriptureReference[]) => void;
   closeEditor: () => void;
   saveEntry: (draft: JournalEntryDraft, id?: string) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
@@ -46,7 +46,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
-  const pathname = usePathname();
+  const [initialScripture, setInitialScripture] = useState<ScriptureReference[]>([]);
   const hasLoadedRef = useRef(false);
   const previousAuthStateRef = useRef<boolean | null>(null);
 
@@ -91,7 +91,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     };
 
     checkAuthAndLoad();
-  }, [pathname, refreshEntries]);
+  }, [refreshEntries]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -112,14 +112,16 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const openEditor = useCallback((entry?: JournalEntry | null) => {
+  const openEditor = useCallback((entry?: JournalEntry | null, scripture?: ScriptureReference[]) => {
     setSelectedEntry(entry || null);
+    setInitialScripture(scripture || []);
     setEditorOpen(true);
   }, []);
 
   const closeEditor = useCallback(() => {
     setEditorOpen(false);
     setSelectedEntry(null);
+    setInitialScripture([]);
   }, []);
 
   const saveEntry = useCallback(
@@ -145,7 +147,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
             content: draft.content || null,
             scripture: draft.scripture || null,
             type: draft.type || "Life",
-            tags: [],
+            tags: draft.tags || [],
           });
           if (result.error) {
             toast.error("Failed to create entry", {
@@ -205,6 +207,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
       {children}
       <JournalEditor
         entry={selectedEntry}
+        initialScripture={initialScripture}
         open={editorOpen}
         onOpenChange={(open) => {
           if (!open) closeEditor();

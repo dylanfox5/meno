@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import { BookOpen, MoreHorizontal, Trash2, Heart, Book } from "lucide-react";
 import type { JournalEntry } from "@/lib/types";
@@ -13,6 +14,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface JournalCardProps {
   entry: JournalEntry;
@@ -28,9 +39,9 @@ function getTextPreview(html: string, maxLength: number = 150): string {
     .replace(/<li[^>]*>/gi, "• ")
     .replace(/<\/li>/gi, " ");
 
-  const temp = document.createElement("div");
-  temp.innerHTML = processed;
-  const text = temp.textContent || temp.innerText || "";
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(processed, "text/html");
+  const text = doc.body.textContent || "";
   const cleaned = text.replace(/\s+/g, " ").trim();
 
   return cleaned.length > maxLength
@@ -39,6 +50,7 @@ function getTextPreview(html: string, maxLength: number = 150): string {
 }
 
 export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const preview = entry.content ? getTextPreview(entry.content) : "";
   const isScripture = entry.type === "Scripture";
   
@@ -57,11 +69,10 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
       : null;
 
   return (
+    <>
     <Card
-      className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 ${
-        isScripture
-          ? "border-l-4 border-l-primary"
-          : "border-l-4 border-l-emerald-500"
+      className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30 border-l-4 ${
+        isScripture ? "border-l-primary" : "border-l-muted-foreground/40"
       }`}
       onClick={() => onSelect(entry)}
     >
@@ -74,7 +85,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
                 className={`text-xs ${
                   isScripture
                     ? "bg-primary/10 text-primary hover:bg-primary/20"
-                    : "bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20"
+                    : ""
                 }`}
               >
                 {isScripture ? (
@@ -90,16 +101,16 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
                 )}
               </Badge>
             </div>
-            <h3 className="text-lg font-medium text-foreground truncate">
+            <h3 className="font-serif text-lg font-medium text-foreground truncate">
               {entry.title || "Untitled Entry"}
             </h3>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {format(entry.created_at, "MMMM d, yyyy")}
+              {format(new Date(entry.created_at), "MMMM d, yyyy")}
             </p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -108,7 +119,7 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
                 className="text-destructive focus:text-destructive"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDelete(entry.id);
+                  setDeleteOpen(true);
                 }}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
@@ -118,9 +129,9 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="px-6">
+      <CardContent className="px-4 sm:px-6">
         {scriptureDisplay && (
-          <div className="flex items-center gap-1.5 text-sm text-primary mb-2">
+          <div className="flex items-center gap-1.5 text-sm text-scripture mb-2">
             <BookOpen className="w-3.5 h-3.5" />
             <span className="font-medium">{scriptureDisplay}</span>
           </div>
@@ -148,5 +159,26 @@ export function JournalCard({ entry, onSelect, onDelete }: JournalCardProps) {
         )}
       </CardContent>
     </Card>
+
+    <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Entry?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete "{entry.title || "Untitled Entry"}"? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => onDelete(entry.id)}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

@@ -1,15 +1,15 @@
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { ContentHeader } from "@/components/content-header";
-import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { BibleIntakeContent } from "@/components/bible-intake/bible-intake-content";
 import { ErrorBoundary } from "@/components/error-boundary";
 
-export default function DashboardPage() {
+export default function BibleIntakePage() {
   return (
     <ProtectedRoute>
-      <ContentHeader title="Dashboard" />
+      <ContentHeader title="Bible Intake" />
       <main className="flex-1 overflow-auto">
         <ErrorBoundary>
-          <DashboardContent />
+          <BibleIntakeContent />
         </ErrorBoundary>
       </main>
     </ProtectedRoute>

@@ -65,7 +65,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
       setIsAdding(false);
     } else {
       setParseError(
-        "Could not parse reference. Try format: Book Chapter:Verse"
+        'Couldn\'t parse that. Try: "John 3:16", "Romans 8", or "Psalm 23:1-6"'
       );
     }
   };
@@ -109,7 +109,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
             variant="secondary"
             className="gap-1.5 pr-1 py-1 text-sm font-normal"
           >
-            <BookOpen className="w-3.5 h-3.5 text-primary" />
+            <BookOpen className="w-3.5 h-3.5 text-scripture" />
             {formatScriptureReference(ref)}
             <button
               type="button"
@@ -128,7 +128,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
             variant="outline"
             size="sm"
             onClick={() => setIsAdding(true)}
-            className="h-8 text-xs"
+            className="h-9 text-xs"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             Add Scripture
@@ -198,7 +198,7 @@ export function ScriptureInput({ value, onChange }: ScriptureInputProps) {
                   {selectedBook || "Select book..."}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[300px] p-0" align="start">
+              <PopoverContent className="w-[min(300px,calc(100vw-2rem))] p-0" align="start">
                 <Command>
                   <CommandInput placeholder="Search books..." />
                   <CommandList>

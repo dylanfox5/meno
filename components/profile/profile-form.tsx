@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { updateProfile } from '@/app/profile/actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -24,11 +25,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     setIsLoading(true)
     setMessage(null)
 
-    console.log('Submitting form with:', formData.get('full_name'))
-
     const result = await updateProfile(formData)
-
-    console.log('Result:', result)
 
     if (result?.error) {
       setMessage({ type: 'error', text: result.error })
@@ -91,7 +88,14 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           )}
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Changes'}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Save Changes'
+            )}
           </Button>
         </form>
       </CardContent>

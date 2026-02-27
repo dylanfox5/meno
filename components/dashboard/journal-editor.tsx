@@ -27,6 +27,7 @@ import { ScriptureInput } from "../scripture/scripture-input";
 
 interface JournalEditorProps {
   entry?: JournalEntry | null;
+  initialScripture?: ScriptureReference[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (entry: JournalEntryDraft, id?: string) => void;
@@ -34,6 +35,7 @@ interface JournalEditorProps {
 
 export function JournalEditor({
   entry,
+  initialScripture = [],
   open,
   onOpenChange,
   onSave,
@@ -52,13 +54,13 @@ export function JournalEditor({
     if (open) {
       setTitle(entry?.title || "");
       setContent(entry?.content || "");
-      setScripture(entry?.scripture || []);
-      setType(entry?.type || "Life");
+      setScripture(entry?.scripture || initialScripture);
+      setType(entry?.type || (initialScripture.length > 0 ? "Scripture" : "Life"));
       setTags(entry?.tags || []);
       setNewTag("");
       setCurrentPrompt(null);
     }
-  }, [entry, open]);
+  }, [entry, open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = () => {
     if (!content.trim()) return;
@@ -130,13 +132,13 @@ export function JournalEditor({
               placeholder="Entry Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="flex-1 text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
+              className="flex-1 min-w-0 text-lg border-0 focus-visible:ring-0 placeholder:text-muted-foreground/60 shadow-none"
             />
             <Select
               value={type}
               onValueChange={(value: "Life" | "Scripture") => setType(value)}
             >
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-28 shrink-0">
                 <SelectValue placeholder="Entry type" />
               </SelectTrigger>
               <SelectContent>
@@ -145,6 +147,11 @@ export function JournalEditor({
               </SelectContent>
             </Select>
           </div>
+          <p className="text-xs text-muted-foreground -mt-2">
+            {type === "Scripture"
+              ? "Reflections on a specific passage or reading"
+              : "General life observations, prayers, or thoughts"}
+          </p>
 
           <div className="px-3 py-3 rounded-lg bg-muted/50 border border-border">
             <ScriptureInput value={scripture} onChange={setScripture} />
