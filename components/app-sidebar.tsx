@@ -11,6 +11,7 @@ import {
   LogOut,
   User,
   BookMarked,
+  Sun,
 } from "lucide-react";
 import { signout } from "@/app/auth/actions";
 import { LogDialog } from "@/components/log-dialog";
@@ -46,14 +47,19 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
+    title: "Bible Intake",
+    url: "/bible-intake",
+    icon: Book,
+  },
+  {
     title: "Journal",
     url: "/journal",
     icon: BookOpen,
   },
   {
-    title: "Bible Intake",
-    url: "/bible-intake",
-    icon: Book,
+    title: "Prayer",
+    url: "/prayer",
+    icon: Sun,
   },
 ];
 

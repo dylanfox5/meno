@@ -9,6 +9,7 @@ import { JournalProvider } from "@/lib/journal-context";
 import { createClient } from "@/lib/supabase/server";
 import { Toaster } from "@/components/ui/sonner";
 import { BibleReadingProvider } from "@/lib/bible-reading-context";
+import { PrayerProvider } from "@/lib/prayer-context";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
@@ -58,10 +59,12 @@ export default async function RootLayout({
           {showSidebar ? (
             <JournalProvider>
               <BibleReadingProvider>
-                <SidebarProvider>
-                  <AppSidebarWrapper />
-                  <SidebarInset>{children}</SidebarInset>
-                </SidebarProvider>
+                <PrayerProvider>
+                  <SidebarProvider>
+                    <AppSidebarWrapper />
+                    <SidebarInset>{children}</SidebarInset>
+                  </SidebarProvider>
+                </PrayerProvider>
               </BibleReadingProvider>
             </JournalProvider>
           ) : (

@@ -24,7 +24,7 @@ import { createClient } from "@/lib/supabase/client";
 interface JournalContextType {
   entries: JournalEntry[];
   isLoading: boolean;
-  openEditor: (entry?: JournalEntry | null, initialScripture?: ScriptureReference[]) => void;
+  openEditor: (entry?: JournalEntry | null, initialScripture?: ScriptureReference[], onClose?: () => void) => void;
   closeEditor: () => void;
   saveEntry: (draft: JournalEntryDraft, id?: string) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
@@ -48,6 +48,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [initialScripture, setInitialScripture] = useState<ScriptureReference[]>([]);
   const hasLoadedRef = useRef(false);
+  const onEditorCloseRef = useRef<(() => void) | null>(null);
   const previousAuthStateRef = useRef<boolean | null>(null);
 
   const refreshEntries = useCallback(async () => {
@@ -112,9 +113,10 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const openEditor = useCallback((entry?: JournalEntry | null, scripture?: ScriptureReference[]) => {
+  const openEditor = useCallback((entry?: JournalEntry | null, scripture?: ScriptureReference[], onClose?: () => void) => {
     setSelectedEntry(entry || null);
     setInitialScripture(scripture || []);
+    onEditorCloseRef.current = onClose || null;
     setEditorOpen(true);
   }, []);
 
@@ -122,6 +124,9 @@ export function JournalProvider({ children }: { children: ReactNode }) {
     setEditorOpen(false);
     setSelectedEntry(null);
     setInitialScripture([]);
+    const callback = onEditorCloseRef.current;
+    onEditorCloseRef.current = null;
+    callback?.();
   }, []);
 
   const saveEntry = useCallback(
