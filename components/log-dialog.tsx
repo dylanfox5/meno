@@ -1,24 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { BookOpen, Calendar, Plus, X, PenLine, Loader2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { BookOpen, Calendar, Plus, X, PenLine, Loader2, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useBibleReading } from "@/lib/bible-reading-context";
 import { useJournal } from "@/lib/journal-context";
+import { usePrayer } from "@/lib/prayer-context";
 import {
   parseScriptureReference,
   formatScriptureReference,
 } from "@/lib/scripture-utils";
 import type { ScriptureReference } from "@/lib/scripture-utils";
+import type { PrayerGroup } from "@/lib/types";
+
+const PRAYER_GROUPS: PrayerGroup[] = ["Family", "Friends", "Church", "World", "Self"];
 
 interface LogDialogProps {
   open: boolean;
@@ -28,8 +40,9 @@ interface LogDialogProps {
 export function LogDialog({ open, onOpenChange }: LogDialogProps) {
   const { saveReading } = useBibleReading();
   const { openEditor } = useJournal();
+  const { savePrayerRequest } = usePrayer();
 
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [scripture, setScripture] = useState<ScriptureReference[]>([]);
   const [readingDate, setReadingDate] = useState(
     () => new Date().toISOString().split("T")[0]
@@ -38,13 +51,29 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
   const [parseError, setParseError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // When closing to open the journal editor, skip the reset so state
+  // is preserved for when the dialog reopens at step 3
+  const skipResetRef = useRef(false);
+
+  // Step 3: Prayer form state
+  const [prayerGroup, setPrayerGroup] = useState<PrayerGroup>("Family");
+  const [prayerSubject, setPrayerSubject] = useState("");
+  const [prayerRequest, setPrayerRequest] = useState("");
+
   const reset = () => {
+    if (skipResetRef.current) {
+      skipResetRef.current = false;
+      return;
+    }
     setStep(1);
     setScripture([]);
     setReadingDate(new Date().toISOString().split("T")[0]);
     setQuickInput("");
     setParseError(null);
     setIsSaving(false);
+    setPrayerGroup("Family");
+    setPrayerSubject("");
+    setPrayerRequest("");
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -52,6 +81,11 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
     onOpenChange(next);
   };
 
+  const finish = () => {
+    handleOpenChange(false);
+  };
+
+  // Step 1 handlers
   const handleQuickAdd = () => {
     if (!quickInput.trim()) return;
     const parsed = parseScriptureReference(quickInput);
@@ -86,19 +120,46 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
     }
   };
 
+  // Step 2 handlers
   const handleJournalYes = () => {
-    handleOpenChange(false);
-    openEditor(null, scripture);
+    // Close dialog (skip reset), open editor, reopen at step 3 when editor closes
+    skipResetRef.current = true;
+    onOpenChange(false);
+    openEditor(null, scripture, () => {
+      setStep(3);
+      onOpenChange(true);
+    });
   };
 
   const handleJournalNo = () => {
-    handleOpenChange(false);
+    // Stay in dialog, skip straight to prayer step
+    setStep(3);
+  };
+
+  // Step 3 handlers
+  const handlePrayerSave = async () => {
+    if (!prayerSubject.trim() || !prayerRequest.trim()) return;
+    setIsSaving(true);
+    try {
+      await savePrayerRequest({
+        group_name: prayerGroup,
+        subject: prayerSubject.trim(),
+        request: prayerRequest.trim(),
+      });
+      finish();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePrayerSkip = () => {
+    finish();
   };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
-        {step === 1 ? (
+        {step === 1 && (
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -198,7 +259,9 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
               </div>
             </div>
           </>
-        ) : (
+        )}
+
+        {step === 2 && (
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -224,6 +287,94 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
                 <Button onClick={handleJournalYes} className="flex-1">
                   <PenLine className="w-4 h-4 mr-1.5" />
                   Journal it
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Sun className="w-5 h-5 text-primary" />
+                Anything to bring to prayer?
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 pt-2">
+              <p className="text-sm text-muted-foreground">
+                Would you like to add a prayer request?
+              </p>
+
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="log-prayer-group">Group</Label>
+                  <Select
+                    value={prayerGroup}
+                    onValueChange={(v) => setPrayerGroup(v as PrayerGroup)}
+                  >
+                    <SelectTrigger id="log-prayer-group">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRAYER_GROUPS.map((g) => (
+                        <SelectItem key={g} value={g}>
+                          {g}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="log-prayer-subject">Subject</Label>
+                  <Input
+                    id="log-prayer-subject"
+                    placeholder="e.g., Mom's health"
+                    value={prayerSubject}
+                    onChange={(e) => setPrayerSubject(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="log-prayer-request">Request</Label>
+                  <Textarea
+                    id="log-prayer-request"
+                    placeholder="What would you like to pray for?"
+                    value={prayerRequest}
+                    onChange={(e) => setPrayerRequest(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  onClick={handlePrayerSkip}
+                  className="flex-1"
+                >
+                  Not now
+                </Button>
+                <Button
+                  onClick={handlePrayerSave}
+                  disabled={
+                    !prayerSubject.trim() || !prayerRequest.trim() || isSaving
+                  }
+                  className="flex-1"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Sun className="w-4 h-4 mr-1.5" />
+                      Add Prayer
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

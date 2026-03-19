@@ -55,6 +55,30 @@ export type CreateBibleReading = Omit<
 
 export type UpdateBibleReading = Partial<CreateBibleReading>;
 
+// Prayer types
+export type PrayerGroup = 'Family' | 'Friends' | 'Church' | 'World' | 'Self';
+
+export interface PrayerRequest {
+  id: string;
+  user_id: string;
+  group_name: PrayerGroup;
+  subject: string;
+  request: string;
+  is_answered: boolean;
+  answered_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PrayerRequestDraft {
+  group_name: PrayerGroup;
+  subject: string;
+  request: string;
+}
+
+export type CreatePrayerRequest = Omit<PrayerRequest, 'id' | 'user_id' | 'created_at' | 'updated_at'>;
+export type UpdatePrayerRequest = Partial<CreatePrayerRequest>;
+
 // Heatmap data structure
 export interface ReadingHeatmapDay {
   date: string; // ISO date string

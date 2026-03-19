@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meno — Prayer Log Concepts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           oklch(0.97 0.005 80);
+      --fg:           oklch(0.25 0.02 150);
+      --card:         oklch(0.99 0.003 80);
+      --primary:      oklch(0.45 0.12 150);
+      --primary-light: oklch(0.92 0.04 150);
+      --muted:        oklch(0.93 0.008 80);
+      --muted-fg:     oklch(0.50 0.02 150);
+      --border:       oklch(0.88 0.01 80);
+      --scripture:    oklch(0.62 0.14 68);
+      --scripture-bg: oklch(0.97 0.04 80);
+      --parchment:    oklch(0.97 0.025 85);
+      --parchment-border: oklch(0.90 0.03 75);
+      --radius: 0.75rem;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+    }
+
+    /* ── Page header ─────────────────────────────────────────── */
+    .page-header {
+      text-align: center;
+      padding: 3rem 1.5rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    .page-header .eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+    .page-header h1 {
+      font-family: 'Lora', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--fg);
+      line-height: 1.2;
+    }
+    .page-header p {
+      margin-top: 0.6rem;
+      font-size: 0.925rem;
+      color: var(--muted-fg);
+      max-width: 520px;
+      margin-inline: auto;
+      line-height: 1.6;
+    }
+
+    /* ── Tabs ────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 2rem 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    .tab {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--muted-fg);
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--fg); }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .concept { display: none; padding: 2.5rem 1.5rem; max-width: 960px; margin: 0 auto; }
+    .concept.active { display: block; }
+
+    /* ── Concept label ───────────────────────────────────────── */
+    .concept-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+    .concept-title {
+      font-family: 'Lora', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .concept-desc {
+      font-size: 0.875rem;
+      color: var(--muted-fg);
+      max-width: 560px;
+      line-height: 1.65;
+      margin-bottom: 2rem;
+    }
+    .concept-desc strong { color: var(--fg); font-weight: 600; }
+
+    /* ── Shared card ─────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .badge-muted { background: var(--muted); color: var(--muted-fg); }
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-scripture { background: var(--scripture-bg); color: var(--scripture); }
+    .badge-answered { background: oklch(0.95 0.05 80); color: oklch(0.50 0.15 68); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--fg); }
+    .btn-ghost { background: transparent; color: var(--muted-fg); }
+
+    .divider { height: 1px; background: var(--border); margin: 0; }
+
+    /* ─────────────────────────────────────────────────────────── */
+    /*  CONCEPT A — The Vigil Board                                */
+    /* ─────────────────────────────────────────────────────────── */
+
+    .vigil-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .vigil-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 640px) { .vigil-columns { grid-template-columns: 1fr; } }
+
+    .vigil-col-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .vigil-col-label .count {
+      background: var(--muted);
+      color: var(--muted-fg);
+      border-radius: 999px;
+      padding: 0.1rem 0.45rem;
+      font-size: 0.65rem;
+    }
+    .vigil-col-label.answered-label { color: var(--scripture); }
+    .vigil-col-label.answered-label .count { background: var(--scripture-bg); color: var(--scripture); }
+
+    .prayer-card {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      margin-bottom: 0.75rem;
+      transition: box-shadow 0.15s;
+    }
+    .prayer-card:hover { box-shadow: 0 2px 8px oklch(0.25 0.02 150 / 0.08); }
+    .prayer-card-title {
+      font-family: 'Lora', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.45rem;
+      line-height: 1.35;
+    }
+    .prayer-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.6rem;
+    }
+    .days-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted-fg);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .days-badge .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* Answered card variant */
+    .prayer-card.answered {
+      border-color: oklch(0.88 0.06 75);
+      background: oklch(0.99 0.012 82);
+      position: relative;
+      overflow: hidden;
+    }
+    .prayer-card.answered::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, oklch(1 0.02 80 / 0) 60%, oklch(0.92 0.08 75 / 0.35));
+      pointer-events: none;
+    }
+    .answered-on {
+      font-size: 0.68rem;
+      color: var(--scripture);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Add prayer input row */
+    .add-prayer-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+    .add-prayer-row input {
+      flex: 1;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 0.15rem);
+      font-size: 0.825rem;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+    .add-prayer-row input:focus { border-color: var(--primary); }
+    .add-prayer-row input::placeholder { color: var(--muted-fg); }
+
+    /* ─────────────────────────────────────────────────────────── */
+    /*  CONCEPT B — The Daily Practice                             */
+    /* ─────────────────────────────────────────────────────────── */
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 500px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+    }
+    .stat-card .stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+      margin-bottom: 0.3rem;
+    }
+    .stat-card .stat-value {
+      font-family: 'Lora', serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--fg);
+      line-height: 1;
+    }
+    .stat-card .stat-sub {
+      font-size: 0.72rem;
+      color: var(--muted-fg);
+      margin-top: 0.2rem;
+    }
+    .stat-card.primary-stat { background: var(--primary-light); border-color: oklch(0.80 0.07 150); }
+    .stat-card.primary-stat .stat-label { color: var(--primary); }
+    .stat-card.primary-stat .stat-value { color: var(--primary); }
+
+    .week-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .week-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .week-day .day-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+    }
+    .week-day .day-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+    }
+    .day-dot.done { background: var(--primary); color: white; }
+    .day-dot.today { background: var(--primary-light); border: 2px solid var(--primary); color: var(--primary); font-weight: 700; }
+    .day-dot.empty { background: var(--muted); color: var(--muted-fg); }
+
+    .section-heading {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-heading a {
+      font-size: 0.7rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+
+    /* Request list */
+    .request-list { display: flex; flex-direction: column; gap: 0; }
+    .request-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .request-item:last-child { border-bottom: none; }
+    .request-item:hover { background: var(--muted); }
+    .request-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .request-check.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .request-check.checked::after {
+      content: '';
+      width: 6px; height: 4px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+    .request-text {
+      font-size: 0.875rem;
+      line-height: 1.45;
+      color: var(--fg);
+      font-family: 'Lora', serif;
+    }
+    .request-text.checked-text {
+      color: var(--muted-fg);
+      text-decoration: line-through;
+      text-decoration-color: oklch(0.75 0.02 150);
+    }
+    .request-days {
+      margin-left: auto;
+      font-size: 0.68rem;
+      color: var(--muted-fg);
+      white-space: nowrap;
+      padding-top: 2px;
+    }
+
+    /* Heatmap mini */
+    .heatmap-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 0.5rem;
+    }
+    .hm-cell {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+    }
+    .hm-0 { background: var(--muted); }
+    .hm-1 { background: oklch(0.75 0.08 150); }
+    .hm-2 { background: oklch(0.60 0.10 150); }
+    .hm-3 { background: oklch(0.48 0.12 150); }
+
+    /* ─────────────────────────────────────────────────────────── */
+    /*  CONCEPT C — The Intercession                               */
+    /* ─────────────────────────────────────────────────────────── */
+
+    .intercession-intro {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.925rem;
+      color: var(--muted-fg);
+      border-left: 3px solid var(--parchment-border);
+      padding: 0.5rem 0 0.5rem 1rem;
+      margin-bottom: 1.75rem;
+      line-height: 1.6;
+    }
+
+    .group-section { margin-bottom: 1rem; }
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      user-select: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: background 0.1s;
+    }
+    .group-header:hover { background: var(--muted); }
+    .group-section.open .group-header {
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-bottom-color: transparent;
+    }
+    .group-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .group-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+    }
+    .group-name {
+      font-family: 'Lora', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .group-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .group-count {
+      font-size: 0.7rem;
+      color: var(--muted-fg);
+      font-weight: 500;
+    }
+    .chevron {
+      width: 16px; height: 16px;
+      color: var(--muted-fg);
+      transition: transform 0.2s;
+    }
+    .group-section.open .chevron { transform: rotate(90deg); }
+
+    .group-body {
+      display: none;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      overflow: hidden;
+    }
+    .group-section.open .group-body { display: block; }
+
+    .person-item {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .person-item:last-child { border-bottom: none; }
+    .person-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: var(--muted);
+      color: var(--muted-fg);
+    }
+    .person-info { flex: 1; }
+    .person-name {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 0.2rem;
+    }
+    .person-request {
+      font-family: 'Lora', serif;
+      font-size: 0.825rem;
+      color: var(--muted-fg);
+      line-height: 1.4;
+    }
+    .person-since {
+      font-size: 0.65rem;
+      color: var(--muted-fg);
+      white-space: nowrap;
+      padding-top: 3px;
+    }
+
+    /* answered person row */
+    .person-item.answered-person .person-request {
+      color: var(--scripture);
+      font-style: italic;
+    }
+    .person-item.answered-person .person-since {
+      color: var(--scripture);
+      font-weight: 600;
+    }
+
+    /* ── Tags / pill selectors ───────────────────────────────── */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+    .pill {
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--muted);
+      color: var(--muted-fg);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.12s;
+    }
+    .pill:hover { border-color: var(--primary); color: var(--primary); }
+    .pill.active { background: var(--primary-light); color: var(--primary); border-color: oklch(0.75 0.08 150); }
+
+    /* ── Design rationale ────────────────────────────────────── */
+    .rationale {
+      margin-top: 2.5rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--parchment);
+      border: 1px solid var(--parchment-border);
+      border-radius: var(--radius);
+    }
+    .rationale h4 {
+      font-family: 'Lora', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+    .rationale ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .rationale ul li {
+      font-size: 0.825rem;
+      color: var(--muted-fg);
+      padding-left: 1.1rem;
+      position: relative;
+      line-height: 1.5;
+    }
+    .rationale ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-size: 0.75rem;
+    }
+    .rationale ul li strong { color: var(--fg); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">Meno · feat/prayer</div>
+  <h1>Prayer Log — Three Concepts</h1>
+  <p>Each concept approaches prayer differently. Review the mockups below and choose a direction.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('a', this)">A · The Vigil Board</button>
+  <button class="tab" onclick="switchTab('b', this)">B · The Daily Practice</button>
+  <button class="tab" onclick="switchTab('c', this)">C · The Intercession</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CONCEPT A                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="concept active" id="concept-a">
+  <span class="concept-label">Concept A</span>
+  <h2 class="concept-title">The Vigil Board</h2>
+  <p class="concept-desc">Prayer is a living conversation, not a closed document. This concept centers the <strong>lifecycle of a request</strong> — from first lifting it up, through days and weeks of faithful intercession, to the moment God answers. The board is always alive; you return to it, you mark things answered, you feel the weight of time.</p>
+
+  <div class="vigil-header">
+    <div>
+      <span style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-fg)">Your Prayers</span>
+    </div>
+    <button class="btn btn-primary" style="font-size:0.775rem">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Prayer
+    </button>
+  </div>
+
+  <div class="vigil-columns">
+    <!-- Lifting Up column -->
+    <div>
+      <div class="vigil-col-label">
+        Lifting Up <span class="count">4</span>
+      </div>
+
+      <div class="prayer-card">
+        <div class="prayer-card-title">Peace and full healing for Mom's surgery recovery</div>
+        <span class="badge badge-muted">Healing</span>
+        <div class="prayer-card-meta">
+          <div class="days-badge">
+            <span class="dot"></span>
+            12 days in prayer
+          </div>
+          <button class="btn btn-ghost" style="font-size:0.7rem;padding:0.25rem 0.5rem">Mark answered</button>
+        </div>
+      </div>
+
+      <div class="prayer-card">
+        <div class="prayer-card-title">Clarity and wisdom for the new job decision</div>
+        <span class="badge badge-muted">Guidance</span>
+        <div class="prayer-card-meta">
+          <div class="days-badge">
+            <span class="dot"></span>
+            3 days in prayer
+          </div>
+          <button class="btn btn-ghost" style="font-size:0.7rem;padding:0.25rem 0.5rem">Mark answered</button>
+        </div>
+      </div>
+
+      <div class="prayer-card">
+        <div class="prayer-card-title">Unity and growth in our small group</div>
+        <span class="badge badge-muted">Church</span>
+        <div class="prayer-card-meta">
+          <div class="days-badge">
+            <span class="dot"></span>
+            28 days in prayer
+          </div>
+          <button class="btn btn-ghost" style="font-size:0.7rem;padding:0.25rem 0.5rem">Mark answered</button>
+        </div>
+      </div>
+
+      <div class="prayer-card">
+        <div class="prayer-card-title">Alex's heart to soften toward the gospel</div>
+        <span class="badge badge-muted">Intercession</span>
+        <div class="prayer-card-meta">
+          <div class="days-badge">
+            <span class="dot"></span>
+            214 days in prayer
+          </div>
+          <button class="btn btn-ghost" style="font-size:0.7rem;padding:0.25rem 0.5rem">Mark answered</button>
+        </div>
+      </div>
+
+      <div class="add-prayer-row">
+        <input type="text" placeholder="Add a new prayer request...">
+        <button class="btn btn-outline" style="padding:0.5rem 0.75rem">Add</button>
+      </div>
+    </div>
+
+    <!-- Answered column -->
+    <div>
+      <div class="vigil-col-label answered-label">
+        ✦ Answered <span class="count">7</span>
+      </div>
+
+      <div class="prayer-card answered">
+        <div class="prayer-card-title">Financial provision for the broken-down car</div>
+        <span class="badge badge-answered">Provision</span>
+        <div class="answered-on">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Answered after 43 days · Feb 12
+        </div>
+      </div>
+
+      <div class="prayer-card answered">
+        <div class="prayer-card-title">Restoration of relationship with my brother</div>
+        <span class="badge badge-answered">Relationship</span>
+        <div class="answered-on">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Answered after 91 days · Jan 4
+        </div>
+      </div>
+
+      <div class="prayer-card answered">
+        <div class="prayer-card-title">Sarah's salvation</div>
+        <span class="badge badge-answered">Intercession</span>
+        <div class="answered-on">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Answered after 847 days · Nov 2024
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <h4>Why this is different from the journal</h4>
+    <ul>
+      <li><strong>State and lifecycle</strong> — a prayer is "open" until God answers it. No journal entry works like this.</li>
+      <li><strong>The weight of time</strong> — "214 days in prayer" is a discipline statement. It shows faithfulness visually.</li>
+      <li><strong>The answered moment</strong> — marking something answered is a small act of worship and testimony-keeping.</li>
+      <li><strong>Sparse on words</strong> — prayer requests are brief and directed, not reflective paragraphs.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CONCEPT B                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="concept" id="concept-b">
+  <span class="concept-label">Concept B</span>
+  <h2 class="concept-title">The Daily Practice</h2>
+  <p class="concept-desc">Prayer is a <strong>discipline before it is a document</strong>. This concept mirrors the Bible intake feature — it cares primarily about whether you showed up. Log that you prayed today, bring your requests, track the streak. The emphasis is the habit of returning to God daily, not the prose of what you said.</p>
+
+  <div class="stats-row">
+    <div class="stat-card primary-stat">
+      <div class="stat-label">Day Streak</div>
+      <div class="stat-value">47</div>
+      <div class="stat-sub">🔥 Personal best</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Month</div>
+      <div class="stat-value">24</div>
+      <div class="stat-sub">sessions logged</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Answered</div>
+      <div class="stat-value">18</div>
+      <div class="stat-sub">prayers total</div>
+    </div>
+  </div>
+
+  <!-- This week -->
+  <div class="section-heading">This Week</div>
+  <div class="week-row" style="margin-bottom:1.5rem">
+    <div class="week-day"><span class="day-label">Mon</span><div class="day-dot done">✓</div></div>
+    <div class="week-day"><span class="day-label">Tue</span><div class="day-dot done">✓</div></div>
+    <div class="week-day"><span class="day-label">Wed</span><div class="day-dot done">✓</div></div>
+    <div class="week-day"><span class="day-label">Thu</span><div class="day-dot done">✓</div></div>
+    <div class="week-day"><span class="day-label">Fri</span><div class="day-dot today">·</div></div>
+    <div class="week-day"><span class="day-label">Sat</span><div class="day-dot empty">·</div></div>
+    <div class="week-day"><span class="day-label">Sun</span><div class="day-dot empty">·</div></div>
+  </div>
+
+  <!-- Today's log -->
+  <div class="card" style="margin-bottom:1.5rem">
+    <div style="padding:0.9rem 1rem 0.75rem;display:flex;align-items:center;justify-content:space-between">
+      <div class="section-heading" style="margin:0">Today's Requests</div>
+      <button class="btn btn-ghost" style="font-size:0.7rem;padding:0.25rem 0.5rem;color:var(--primary)">
+        + Add
+      </button>
+    </div>
+    <div class="divider"></div>
+    <div class="request-list">
+      <div class="request-item">
+        <div class="request-check checked"></div>
+        <div class="request-text checked-text">Give thanks for answered prayers</div>
+        <span class="request-days">—</span>
+      </div>
+      <div class="request-item">
+        <div class="request-check checked"></div>
+        <div class="request-text checked-text">Peace for Mom's surgery recovery</div>
+        <span class="request-days">12d</span>
+      </div>
+      <div class="request-item">
+        <div class="request-check"></div>
+        <div class="request-text">Clarity for the new job decision</div>
+        <span class="request-days">3d</span>
+      </div>
+      <div class="request-item">
+        <div class="request-check"></div>
+        <div class="request-text">Alex's heart toward the gospel</div>
+        <span class="request-days">214d</span>
+      </div>
+      <div class="request-item">
+        <div class="request-check"></div>
+        <div class="request-text">Unity in our small group</div>
+        <span class="request-days">28d</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div style="padding:0.75rem 1rem">
+      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:0.8rem">
+        Log Prayer Session
+      </button>
+    </div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="section-heading">
+    Prayer Consistency
+    <a>View full year</a>
+  </div>
+  <div class="card" style="padding:1rem">
+    <div class="heatmap-mini">
+      <!-- Simulated 28 weeks × 7 days = 196 cells -->
+      <script>
+        const pattern = [3,2,3,1,0,2,3,3,3,2,3,2,1,3,2,0,1,3,3,2,3,3,2,3,1,0,3,2,3,3,0,1,2,3,3,2,3,1,3,2,0,1,3,3,2,3,3,1,0,3,2,3,3,2,1,3,2,0,1,3,3,2,3,2,3,1,0,3,2,3,3,2,1,3,2,0,3,3,3,2,3,1,0,2,3,3,2,3,3,2,0,1,3,2,3,3,0,1,2,3,3,2,1,3,2,0,1,3,3,3,2,1,3,2,0,1,3,3,2,1,3,3,0,3,2,3,3,2,1,3,2,0,1,3,3,2,3,2,1,3,2,0,1,3,3,3,2,1,3,2,0,3,3,2,1,3,2,0,1,3,3,2,3,2,3,1,0,3,2,3,3,2,1,3,2,0,1,3,3,2,3,2,1,3,2,0,1,3,3,2,3,2,3,1,0];
+        document.write(pattern.map(v => `<div class="hm-cell hm-${v}"></div>`).join(''));
+      </script>
+    </div>
+    <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.75rem">
+      <span style="font-size:0.65rem;color:var(--muted-fg)">Less</span>
+      <div class="hm-cell hm-0" style="flex-shrink:0"></div>
+      <div class="hm-cell hm-1" style="flex-shrink:0"></div>
+      <div class="hm-cell hm-2" style="flex-shrink:0"></div>
+      <div class="hm-cell hm-3" style="flex-shrink:0"></div>
+      <span style="font-size:0.65rem;color:var(--muted-fg)">More</span>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <h4>Why this is different from the journal</h4>
+    <ul>
+      <li><strong>Discipline-first</strong> — the heatmap and streak ask "did you show up?" not "what did you write?"</li>
+      <li><strong>Checklist energy</strong> — praying through your list is an act, not a reflection. You check things off.</li>
+      <li><strong>Persistent requests</strong> — requests carry forward each day until answered or removed, unlike journal entries.</li>
+      <li>Pairs naturally with the Bible intake page — same habit-tracking pattern, same data shape.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CONCEPT C                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="concept" id="concept-c">
+  <span class="concept-label">Concept C</span>
+  <h2 class="concept-title">The Intercession</h2>
+  <p class="concept-desc">Prayer is fundamentally about <strong>who you are bringing before God</strong>. This concept organizes your prayer life around people and concerns — Family, Friends, Church, World, Self. Instead of a flat list, your prayer life has shape and structure that reflects relationship.</p>
+
+  <p class="intercession-intro">"I urge, then, first of all, that petitions, prayers, intercession and thanksgiving be made for all people." — 1 Tim 2:1</p>
+
+  <!-- Filter pills -->
+  <div style="margin-bottom:1.5rem">
+    <div class="section-heading" style="margin-bottom:0.5rem">Filter</div>
+    <div class="pill-row">
+      <span class="pill active">All</span>
+      <span class="pill">Family</span>
+      <span class="pill">Friends</span>
+      <span class="pill">Church</span>
+      <span class="pill">World</span>
+      <span class="pill">Self</span>
+    </div>
+  </div>
+
+  <!-- Family group (open) -->
+  <div class="group-section open">
+    <div class="group-header" onclick="toggleGroup(this)">
+      <div class="group-left">
+        <div class="group-icon" style="background:oklch(0.92 0.04 30);color:oklch(0.50 0.15 30)">👨‍👩‍👧</div>
+        <span class="group-name">Family</span>
+        <span class="badge badge-muted" style="margin-left:0.25rem">3 active</span>
+      </div>
+      <div class="group-right">
+        <span class="group-count">1 answered this month</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="group-body">
+      <div class="person-item">
+        <div class="person-avatar" style="background:oklch(0.88 0.05 150);color:var(--primary)">M</div>
+        <div class="person-info">
+          <div class="person-name">Mom</div>
+          <div class="person-request">Full healing and peace through surgery recovery</div>
+        </div>
+        <div class="person-since">12 days</div>
+      </div>
+      <div class="person-item">
+        <div class="person-avatar" style="background:oklch(0.88 0.05 200);color:oklch(0.45 0.10 200)">D</div>
+        <div class="person-info">
+          <div class="person-name">Dad</div>
+          <div class="person-request">Peace and purpose in retirement transition</div>
+        </div>
+        <div class="person-since">47 days</div>
+      </div>
+      <div class="person-item">
+        <div class="person-avatar" style="background:oklch(0.88 0.05 60);color:oklch(0.50 0.12 60)">J</div>
+        <div class="person-info">
+          <div class="person-name">Jake (brother)</div>
+          <div class="person-request">Return to faith and reconciliation with church</div>
+        </div>
+        <div class="person-since">8 mo</div>
+      </div>
+      <div class="person-item answered-person">
+        <div class="person-avatar" style="background:var(--scripture-bg);color:var(--scripture)">✦</div>
+        <div class="person-info">
+          <div class="person-name">Sister's pregnancy</div>
+          <div class="person-request">Answered — healthy baby boy, Feb 14</div>
+        </div>
+        <div class="person-since" style="color:var(--scripture)">Answered</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Friends group (closed) -->
+  <div class="group-section">
+    <div class="group-header" onclick="toggleGroup(this)">
+      <div class="group-left">
+        <div class="group-icon" style="background:oklch(0.92 0.04 200);color:oklch(0.45 0.10 200)">👥</div>
+        <span class="group-name">Friends</span>
+        <span class="badge badge-muted" style="margin-left:0.25rem">2 active</span>
+      </div>
+      <div class="group-right">
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="group-body">
+      <div class="person-item">
+        <div class="person-avatar" style="background:oklch(0.88 0.05 80);color:oklch(0.50 0.12 80)">A</div>
+        <div class="person-info">
+          <div class="person-name">Alex</div>
+          <div class="person-request">Heart to soften toward the gospel</div>
+        </div>
+        <div class="person-since">214 days</div>
+      </div>
+      <div class="person-item">
+        <div class="person-avatar" style="background:oklch(0.88 0.05 310);color:oklch(0.50 0.12 310)">S</div>
+        <div class="person-info">
+          <div class="person-name">Sarah</div>
+          <div class="person-request">Discernment in career change decision</div>
+        </div>
+        <div class="person-since">6 days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Church group (closed) -->
+  <div class="group-section">
+    <div class="group-header" onclick="toggleGroup(this)">
+      <div class="group-left">
+        <div class="group-icon" style="background:oklch(0.92 0.03 150);color:var(--primary)">⛪</div>
+        <span class="group-name">Church</span>
+        <span class="badge badge-muted" style="margin-left:0.25rem">1 active</span>
+      </div>
+      <div class="group-right">
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="group-body">
+      <div class="person-item">
+        <div class="person-avatar" style="background:var(--primary-light);color:var(--primary)">SG</div>
+        <div class="person-info">
+          <div class="person-name">Small group</div>
+          <div class="person-request">Unity, depth, and that we'd make disciples together</div>
+        </div>
+        <div class="person-since">28 days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- World group (closed) -->
+  <div class="group-section">
+    <div class="group-header" onclick="toggleGroup(this)">
+      <div class="group-left">
+        <div class="group-icon" style="background:oklch(0.92 0.04 230);color:oklch(0.45 0.12 230)">🌍</div>
+        <span class="group-name">World</span>
+        <span class="badge badge-muted" style="margin-left:0.25rem">1 active</span>
+      </div>
+      <div class="group-right">
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="group-body">
+      <div class="person-item">
+        <div class="person-avatar" style="background:oklch(0.88 0.05 230);color:oklch(0.45 0.12 230)">🕊</div>
+        <div class="person-info">
+          <div class="person-name">Persecuted church</div>
+          <div class="person-request">Courage, provision, and that the gospel spreads through suffering</div>
+        </div>
+        <div class="person-since">ongoing</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rationale">
+    <h4>Why this is different from the journal</h4>
+    <ul>
+      <li><strong>Relational structure</strong> — your prayer life organized around people, not timestamps.</li>
+      <li><strong>Intercession as the frame</strong> — the journal is about you and God; this is about bringing <em>others</em> to God.</li>
+      <li><strong>Accordion groups</strong> — gives a sense of scope ("I'm praying for 9 people across 4 categories") without overwhelming.</li>
+      <li>The "214 days praying for Alex" detail makes the cost of faithful intercession visible and weighty.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  function switchTab(id, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.concept').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('concept-' + id).classList.add('active');
+  }
+  function toggleGroup(header) {
+    header.closest('.group-section').classList.toggle('open');
+  }
+</script>
+</body>
+</html>
